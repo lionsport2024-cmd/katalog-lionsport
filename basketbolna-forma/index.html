@@ -1,0 +1,881 @@
+<title>Баскетбольна форма</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap">
+<style>
+  :root {
+    --bg: #F1F2EC;
+    --surface: #FFFFFF;
+    --surface-2: #FAFAF6;
+    --ink: #16211B;
+    --muted: #63706A;
+    --line: #DDE2D8;
+    --line-strong: #C6CEC2;
+    --accent: #10654A;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #E0EFE6;
+    --chip: #FFFFFF;
+    --shadow: 0 1px 2px rgba(22, 33, 27, .06), 0 8px 24px rgba(22, 33, 27, .06);
+    --radius: 14px;
+    --display: "Unbounded", "Commissioner", system-ui, sans-serif;
+    --body: "Commissioner", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11150F;
+      --surface: #1A1F19;
+      --surface-2: #161B15;
+      --ink: #E9EEE6;
+      --muted: #9CA99A;
+      --line: #2A322A;
+      --line-strong: #3A443A;
+      --accent: #5BC38F;
+      --accent-ink: #0C1610;
+      --accent-soft: #1D2B22;
+      --chip: #1F261E;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11150F;
+    --surface: #1A1F19;
+    --surface-2: #161B15;
+    --ink: #E9EEE6;
+    --muted: #9CA99A;
+    --line: #2A322A;
+    --line-strong: #3A443A;
+    --accent: #5BC38F;
+    --accent-ink: #0C1610;
+    --accent-soft: #1D2B22;
+    --chip: #1F261E;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-text-size-adjust: 100%;
+  }
+  h1, h2, h3 { margin: 0; text-wrap: balance; }
+
+  /* ---------- шапка ---------- */
+  .top {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 30;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .top__inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .brand__name {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -.01em;
+    line-height: 1.15;
+  }
+  .brand__meta { font-size: 11.5px; color: var(--muted); }
+  .top__actions { margin-left: auto; display: flex; gap: 8px; }
+  .btn {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 7px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn--solid { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .btn--solid:hover { color: var(--accent-ink); opacity: .92; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- фільтри ---------- */
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; }
+  .filters { padding-block: 14px 6px; display: flex; flex-direction: column; gap: 10px; }
+  .search {
+    width: 100%;
+    font: inherit;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .search::placeholder { color: var(--muted); }
+  .chiprow { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+  .chiprow::-webkit-scrollbar { display: none; }
+  .chiprow__label {
+    align-self: center;
+    font-size: 10.5px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    flex: none;
+    padding-right: 2px;
+  }
+  .chip {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    flex: none;
+    background: var(--chip);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  .chip[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 600;
+  }
+  .countline {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding-block: 10px 4px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .countline strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .linkish {
+    font: inherit;
+    font-size: 13px;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  /* ---------- сітка карток ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+    gap: 14px;
+    padding-block: 8px 40px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    padding: 0;
+    cursor: pointer;
+  }
+  .card:hover { border-color: var(--line-strong); box-shadow: var(--shadow); }
+  .shot {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: #fff;
+  }
+  .shot img {
+    position: absolute;
+    top: 0;
+    left: calc(-100% * var(--i, 0));
+    height: 100%;
+    width: calc(100% * var(--n, 1));
+    max-width: none;
+    object-fit: cover;
+    display: block;
+  }
+  .shot__badge {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    background: rgba(255, 255, 255, .92);
+    color: #16211B;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+  }
+  .card__body { padding: 10px 11px 12px; display: flex; flex-direction: column; gap: 7px; }
+  .card__name {
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card__code {
+    font-size: 11.5px;
+    color: var(--muted);
+    letter-spacing: .04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .dots { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    flex: none;
+  }
+  .dots__more { font-size: 11px; color: var(--muted); }
+  .sizes { display: flex; flex-wrap: wrap; gap: 4px; }
+  .size {
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 6px;
+    padding: 2px 6px;
+    white-space: nowrap;
+  }
+  .size--plain { background: var(--surface-2); color: var(--muted); font-weight: 500; }
+
+  .empty {
+    padding: 40px 0 60px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* ---------- діалоги ---------- */
+  dialog {
+    border: 0;
+    padding: 0;
+    background: var(--surface);
+    color: var(--ink);
+    width: min(560px, 100%);
+    max-width: 100%;
+    max-height: 92dvh;
+    border-radius: 18px 18px 0 0;
+    margin: auto auto 0;
+  }
+  @media (min-width: 720px) {
+    dialog { border-radius: 18px; margin: auto; max-height: 88dvh; }
+  }
+  dialog::backdrop { background: rgba(10, 16, 12, .55); backdrop-filter: blur(2px); }
+  .sheet { display: flex; flex-direction: column; max-height: inherit; }
+  .sheet__head {
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 16px 12px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    z-index: 2;
+  }
+  .sheet__title { font-size: 15px; font-weight: 600; line-height: 1.3; }
+  .sheet__sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .sheet__close {
+    margin-left: auto;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .sheet__body { overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 18px; }
+  .sheet__shot {
+    position: relative;
+    aspect-ratio: 1;
+    max-width: 320px;
+    width: 100%;
+    margin-inline: auto;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .sheet__shot img {
+    position: absolute;
+    top: 0;
+    left: calc(-100% * var(--i, 0));
+    height: 100%;
+    width: calc(100% * var(--n, 1));
+    max-width: none;
+    object-fit: cover;
+    display: block;
+  }
+  .block { display: flex; flex-direction: column; gap: 8px; }
+  .block__label {
+    font-size: 10.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+  .swatch {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font: inherit;
+    font-size: 12.5px;
+    background: var(--chip);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 11px 5px 6px;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .swatch[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .swatch .dot { width: 16px; height: 16px; }
+  .sizelist { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sizelist .size {
+    font-size: 12.5px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .size__qty {
+    font-weight: 500;
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+    opacity: .7;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+  th, td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  thead th {
+    background: var(--surface-2);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: none;
+  }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+  tbody th { font-weight: 600; }
+  .specs { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 13px; }
+  .specs dt { color: var(--muted); }
+  .specs dd { margin: 0; }
+  .order {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .order code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12.5px;
+    background: var(--surface);
+    border-radius: 6px;
+    padding: 1px 5px;
+  }
+  .prose { font-size: 13.5px; color: var(--ink); display: flex; flex-direction: column; gap: 10px; }
+  .prose ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; }
+  .foot {
+    border-top: 1px solid var(--line);
+    padding-block: 18px 34px;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<header class="top">
+  <div class="top__inner">
+    <div class="brand">
+      <h1 class="brand__name">Баскетбольна форма</h1>
+      <span class="brand__meta" id="meta"></span>
+    </div>
+    <div class="top__actions">
+      <button class="btn" type="button" id="helpBtn">Як обрати розмір</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="filters">
+    <input class="search" id="q" type="search" autocomplete="off" placeholder="Пошук: артикул, назва, бренд">
+    <div class="chiprow" id="ageRow"><span class="chiprow__label">Вік</span></div>
+    <div class="chiprow" id="kindRow"><span class="chiprow__label">Вид</span></div>
+    <div class="chiprow" id="sizeRow"><span class="chiprow__label">Розмір</span></div>
+  </section>
+
+  <div class="countline">
+    <span>Показано <strong id="count">0</strong> з <strong id="total">0</strong></span>
+    <button class="linkish" type="button" id="reset" hidden>Скинути фільтри</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty" hidden>За цими фільтрами нічого немає. Спробуйте скинути фільтри.</p>
+
+  <footer class="foot">
+    <span id="footMeta"></span>
+    <span>Наявність і розміри — станом на дату оновлення каталогу. Перед замовленням уточнюйте, будь ласка, у Direct.</span>
+  </footer>
+</main>
+
+<dialog id="modelDialog" aria-label="Картка моделі">
+  <div class="sheet">
+    <div class="sheet__head">
+      <div>
+        <div class="sheet__title" id="mTitle"></div>
+        <div class="sheet__sub" id="mSub"></div>
+      </div>
+      <button class="sheet__close" type="button" data-close aria-label="Закрити">&times;</button>
+    </div>
+    <div class="sheet__body" id="mBody"></div>
+  </div>
+</dialog>
+
+<dialog id="helpDialog" aria-label="Як обрати розмір">
+  <div class="sheet">
+    <div class="sheet__head">
+      <div>
+        <div class="sheet__title">Як обрати розмір</div>
+        <div class="sheet__sub">Мірки знімають по тілу, не по одягу</div>
+      </div>
+      <button class="sheet__close" type="button" data-close aria-label="Закрити">&times;</button>
+    </div>
+    <div class="sheet__body">
+      <div class="prose">
+        <p>У кожної моделі — своя розмірна таблиця виробника. Відкрийте картку моделі: таблиця стоїть одразу під розмірами, які є в наявності.</p>
+        <ul>
+          <li><strong>Зріст</strong> — без взуття, від підлоги до маківки. Для дитячих комплектів це головна мірка.</li>
+          <li><strong>Обхват грудей</strong> — по найширшій точці, сантиметр не затягувати.</li>
+          <li>Якщо мірка на межі двох розмірів, беріть більший: форма має сидіти вільно.</li>
+          <li>Розміри виробника (3XS, 2XS, XS…) не збігаються з українськими — дивіться стовпчик «Розмір одягу (UA)» у таблиці моделі.</li>
+        </ul>
+        <p>Не впевнені — напишіть зріст і вік дитини в Direct, підкажу розмір.</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script id="catalog-data" type="application/json">{"slug":"basketball","title":"Баскетбольна форма","note":"Комплекти майка + шорти, здебільшого двосторонні","fetchedAt":"2026-10-21T06:41:05.205Z","models":[{"code":"LD-8801","name":"Форма баскетбольна двостороння одношарова майка і шорти LIDONG Ease","brand":"Lingo","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2857","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Особливості","Двостороння модель"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["5XL","L","XL","2XL","4XL","3XL"],"colours":[{"name":"Блакитний","swatch":"background: #00bfff;","sizes":[{"size":"5XL","stock":1},{"size":"L","stock":7},{"size":"XL","stock":4}]},{"name":"Зелений","swatch":"background: #008000;","sizes":[{"size":"L","stock":11},{"size":"XL","stock":11},{"size":"2XL","stock":2},{"size":"4XL","stock":2}]},{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"XL","stock":8},{"size":"5XL","stock":10}]},{"name":"Салатовий","swatch":"background: #99ff99;","sizes":[{"size":"5XL","stock":9},{"size":"XL","stock":1},{"size":"2XL","stock":11},{"size":"4XL","stock":3},{"size":"3XL","stock":11}]},{"name":"Сірий","swatch":"background: #808080;","sizes":[{"size":"2XL","stock":1}]},{"name":"Фіолетовий","swatch":"background: #800080;","sizes":[{"size":"5XL","stock":11},{"size":"L","stock":11},{"size":"XL","stock":11},{"size":"2XL","stock":11},{"size":"4XL","stock":11},{"size":"3XL","stock":11}]}],"photo":"p/1.jpg"},{"code":"LD-8802","name":"Форма баскетбольна двостороння одношарова майка і шорти LIDONG Unite","brand":"Lingo","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2857","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Особливості","Двостороння модель"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["L","5XL","4XL","2XL","XL","3XL"],"colours":[{"name":"Помаранчевий","swatch":"background: #ffa500;","sizes":[{"size":"L","stock":11},{"size":"5XL","stock":11},{"size":"4XL","stock":11},{"size":"2XL","stock":6},{"size":"XL","stock":11}]},{"name":"Салатовий","swatch":"background: #99ff99;","sizes":[{"size":"5XL","stock":11},{"size":"4XL","stock":1},{"size":"3XL","stock":11}]},{"name":"Сірий","swatch":"background: #808080;","sizes":[{"size":"5XL","stock":2},{"size":"4XL","stock":11},{"size":"3XL","stock":8}]},{"name":"Фіолетовий","swatch":"background: #800080;","sizes":[{"size":"5XL","stock":11},{"size":"L","stock":11},{"size":"XL","stock":11},{"size":"2XL","stock":10},{"size":"4XL","stock":9},{"size":"3XL","stock":11}]},{"name":"Чорний-червоний","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #ff0000 50% 100%);","sizes":[{"size":"5XL","stock":8},{"size":"L","stock":11},{"size":"XL","stock":11},{"size":"4XL","stock":4},{"size":"3XL","stock":6}]}],"photo":"p/2.jpg"},{"code":"L903","name":"Форма баскетбольна двостороння сітка майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"adults","grid":"2746","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Особливості","Двостороння модель"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["XL","L","4XL","3XL","5XL","2XL"],"colours":[{"name":"Білий-чорний","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #000000 50% 100%);","sizes":[{"size":"XL","stock":2},{"size":"L","stock":1},{"size":"4XL","stock":5},{"size":"3XL","stock":7}]},{"name":"Червоний-чорний","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #000000 50% 100%);","sizes":[{"size":"5XL","stock":2},{"size":"4XL","stock":4},{"size":"3XL","stock":2},{"size":"2XL","stock":5},{"size":"XL","stock":9},{"size":"L","stock":6}]},{"name":"Синій-жовтий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"5XL","stock":1},{"size":"4XL","stock":1},{"size":"3XL","stock":1},{"size":"L","stock":1}]}],"photo":"p/3.jpg"},{"code":"LD-8300","name":"Форма баскетбольна двостороння сітка майка і шорти LIDONG Stalker","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2857","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Особливості","Двостороння модель"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["5XL","4XL","3XL"],"colours":[{"name":"Помаранчевий-сірий","swatch":"background: #ffa500;background: linear-gradient(135deg, #ffa500 0% 50%, #808080 50% 100%);","sizes":[{"size":"5XL","stock":11},{"size":"4XL","stock":11}]},{"name":"Сірий-блакитний","swatch":"background: #808080;background: linear-gradient(135deg, #808080 0% 50%, #00bfff 50% 100%);","sizes":[{"size":"5XL","stock":11},{"size":"4XL","stock":3},{"size":"3XL","stock":2}]},{"name":"Фіолетовий-жовтий","swatch":"background: #800080;background: linear-gradient(135deg, #800080 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"5XL","stock":5},{"size":"4XL","stock":11}]}],"photo":"p/4.jpg"},{"code":"LD-8300T","name":"Форма баскетбольна дитяча двостороння сітка майка і шорти LIDONG Stalker","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"kids","grid":"2478","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Особливості","Двостороння модель"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["S","M","L"],"colours":[{"name":"Блакитний-сірий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #808080 50% 100%);","sizes":[{"size":"S","stock":11},{"size":"M","stock":11},{"size":"L","stock":5}]},{"name":"Помаранчевий-сірий","swatch":"background: #ffa500;background: linear-gradient(135deg, #ffa500 0% 50%, #808080 50% 100%);","sizes":[{"size":"S","stock":11},{"size":"M","stock":10}]}],"photo":"p/5.jpg"},{"code":"LD-8017T","name":"Форма баскетбольна дитяча майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"kids","grid":"2923","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["4XS","3XS","2XS","XS","M","S"],"colours":[{"name":"Червоний-білий","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"4XS","stock":11},{"size":"3XS","stock":11},{"size":"2XS","stock":9},{"size":"XS","stock":1},{"size":"M","stock":3},{"size":"S","stock":5}]},{"name":"Лимонний-чорний","swatch":"background: #fde910;background: linear-gradient(135deg, #fde910 0% 50%, #000000 50% 100%);","sizes":[{"size":"4XS","stock":11},{"size":"3XS","stock":11},{"size":"2XS","stock":4}]},{"name":"Помаранчевий-чорний","swatch":"background: #ffa500;background: linear-gradient(135deg, #ffa500 0% 50%, #000000 50% 100%);","sizes":[{"size":"4XS","stock":11},{"size":"3XS","stock":11},{"size":"2XS","stock":11},{"size":"XS","stock":2},{"size":"S","stock":6}]},{"name":"Синій-білий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"4XS","stock":11},{"size":"3XS","stock":11},{"size":"2XS","stock":4}]},{"name":"Синій-помаранчевий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"3XS","stock":11},{"size":"4XS","stock":11}]},{"name":"Чорний-червоний","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #ff0000 50% 100%);","sizes":[{"size":"4XS","stock":11},{"size":"3XS","stock":11},{"size":"2XS","stock":7}]}],"photo":"p/6.jpg"},{"code":"LD-8018T","name":"Форма баскетбольна дитяча майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"kids","grid":"2923","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["XS","2XS","3XS","4XS","M","S"],"colours":[{"name":"Білий-синій","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"XS","stock":4},{"size":"2XS","stock":11},{"size":"3XS","stock":11},{"size":"4XS","stock":11}]},{"name":"Червоний-синій","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"M","stock":8},{"size":"4XS","stock":11},{"size":"3XS","stock":11},{"size":"2XS","stock":11},{"size":"XS","stock":11},{"size":"S","stock":7}]},{"name":"Синій-білий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"XS","stock":9},{"size":"2XS","stock":2},{"size":"3XS","stock":11},{"size":"4XS","stock":11}]},{"name":"Чорний-лимонний","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #fde910 50% 100%);","sizes":[{"size":"3XS","stock":11},{"size":"4XS","stock":11}]}],"photo":"p/7.jpg"},{"code":"LD-8019T","name":"Форма баскетбольна дитяча майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"kids","grid":"2923","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["4XS","3XS","2XS","XS","M"],"colours":[{"name":"Білий-синій","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"4XS","stock":11},{"size":"3XS","stock":11},{"size":"2XS","stock":8}]},{"name":"Жовтий-чорний","swatch":"background: #ffff00;background: linear-gradient(135deg, #ffff00 0% 50%, #000000 50% 100%);","sizes":[{"size":"4XS","stock":11},{"size":"3XS","stock":11},{"size":"XS","stock":7},{"size":"2XS","stock":11}]},{"name":"Червоний-чорний","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #000000 50% 100%);","sizes":[{"size":"4XS","stock":11},{"size":"3XS","stock":11},{"size":"M","stock":2},{"size":"XS","stock":1},{"size":"2XS","stock":11}]},{"name":"Помаранчевий-синій","swatch":"background: #ffa500;background: linear-gradient(135deg, #ffa500 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"4XS","stock":11},{"size":"3XS","stock":11},{"size":"XS","stock":8},{"size":"2XS","stock":11}]},{"name":"Синій-помаранчевий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"M","stock":2},{"size":"2XS","stock":11},{"size":"3XS","stock":11},{"size":"4XS","stock":11}]},{"name":"Чорний-червоний","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #ff0000 50% 100%);","sizes":[{"size":"4XS","stock":11},{"size":"3XS","stock":11},{"size":"2XS","stock":6}]}],"photo":"p/8.jpg"},{"code":"LD-8095T","name":"Форма баскетбольна дитяча майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"kids","grid":"2478","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["S","M","115","120","L"],"colours":[{"name":"Білий","swatch":"background: #ffffff;","sizes":[{"size":"S","stock":11},{"size":"M","stock":5},{"size":"115","stock":11},{"size":"120","stock":2}]},{"name":"Блакитний","swatch":"background: #00bfff;","sizes":[{"size":"S","stock":11},{"size":"M","stock":8},{"size":"L","stock":11},{"size":"115","stock":11},{"size":"120","stock":11}]},{"name":"Жовтий","swatch":"background: #ffff00;","sizes":[{"size":"S","stock":11},{"size":"M","stock":11},{"size":"L","stock":11},{"size":"115","stock":1}]},{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"115","stock":11},{"size":"120","stock":6},{"size":"S","stock":11},{"size":"M","stock":11},{"size":"L","stock":11}]},{"name":"Салатовий","swatch":"background: #99ff99;","sizes":[{"size":"S","stock":11},{"size":"M","stock":8},{"size":"L","stock":11},{"size":"115","stock":3}]},{"name":"Чорний","swatch":"background: #000000;","sizes":[{"size":"S","stock":11},{"size":"M","stock":11},{"size":"L","stock":11},{"size":"115","stock":5}]}],"photo":"p/9.jpg"},{"code":"LD-8081T","name":"Форма баскетбольна дитяча майка і шорти LIDONG Pace","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"kids","grid":"2478","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["S","120"],"colours":[{"name":"Червоний-жовтий","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"S","stock":1},{"size":"120","stock":8}]}],"photo":"p/10.jpg"},{"code":"LD-8217","name":"Форма баскетбольна жіноча майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2859","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["XL","3XL","2XL","L"],"colours":[{"name":"Червоний-білий","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"XL","stock":3},{"size":"3XL","stock":11}]},{"name":"Салатовий-чорний","swatch":"background: #99ff99;background: linear-gradient(135deg, #99ff99 0% 50%, #000000 50% 100%);","sizes":[{"size":"2XL","stock":2}]},{"name":"Синій-білий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"L","stock":5},{"size":"2XL","stock":3},{"size":"3XL","stock":11}]},{"name":"Синій-помаранчевий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"L","stock":1},{"size":"XL","stock":11},{"size":"2XL","stock":11}]},{"name":"Чорний-червоний","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #ff0000 50% 100%);","sizes":[{"size":"3XL","stock":6}]}],"photo":"p/11.jpg"},{"code":"LD-8295W","name":"Форма баскетбольна жіноча майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2859","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["2XL","XL","L"],"colours":[{"name":"Жовтий-синій","swatch":"background: #ffff00;background: linear-gradient(135deg, #ffff00 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"2XL","stock":9}]},{"name":"Червоний-салатовий","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #99ff99 50% 100%);","sizes":[{"size":"XL","stock":3},{"size":"L","stock":1}]},{"name":"Салатовий-синій","swatch":"background: #99ff99;background: linear-gradient(135deg, #99ff99 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"L","stock":2},{"size":"XL","stock":1},{"size":"2XL","stock":1}]}],"photo":"p/12.jpg"},{"code":"LD-8096W","name":"Форма баскетбольна жіноча майка і шорти LIDONG Reward","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2859","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["L","2XL"],"colours":[{"name":"Червоний-салатовий","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #99ff99 50% 100%);","sizes":[{"size":"L","stock":1},{"size":"2XL","stock":4}]},{"name":"Синій-жовтий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"2XL","stock":5}]}],"photo":"p/13.jpg"},{"code":"CO-1101","name":"Форма баскетбольна жіноча майка і шорти SP-Sport Atlanta","brand":"SP-Sport","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2859","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["L"],"colours":[{"name":"Жовтий","swatch":"background: #ffff00;","sizes":[{"size":"L","stock":2}]}],"photo":"p/14.jpg"},{"code":"102849-108","name":"Форма баскетбольна майка і шорти Joma FINAL II","brand":"Joma","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2986","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Пояс","Еластичний пояс зі шнурком"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["2XL","XL","L","M","S","XS","2XS","3XS","4XS","5XS"],"colours":[{"name":"Чорний-помаранчевий","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"2XL","stock":2},{"size":"XL","stock":2},{"size":"L","stock":2},{"size":"M","stock":2},{"size":"S","stock":2},{"size":"XS","stock":2},{"size":"2XS","stock":2},{"size":"3XS","stock":2},{"size":"4XS","stock":2},{"size":"5XS","stock":1}]}],"photo":"p/15.jpg"},{"code":"102849-602","name":"Форма баскетбольна майка і шорти Joma FINAL II","brand":"Joma","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2986","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Пояс","Еластичний пояс зі шнурком"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["2XL","XL","L","M","S","XS","2XS","3XS","5XS"],"colours":[{"name":"Червоний-білий","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"2XL","stock":2},{"size":"XL","stock":2},{"size":"L","stock":2},{"size":"M","stock":2},{"size":"S","stock":2},{"size":"XS","stock":2},{"size":"2XS","stock":2},{"size":"3XS","stock":2},{"size":"5XS","stock":2}]}],"photo":"p/16.jpg"},{"code":"102849-709","name":"Форма баскетбольна майка і шорти Joma FINAL II","brand":"Joma","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2986","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Пояс","Еластичний пояс зі шнурком"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["4XS","5XS","2XL","XL","L","M","S","XS","2XS","3XS"],"colours":[{"name":"Синій-жовтий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"4XS","stock":3},{"size":"5XS","stock":3},{"size":"2XL","stock":1},{"size":"XL","stock":1},{"size":"L","stock":1},{"size":"M","stock":2},{"size":"S","stock":3},{"size":"XS","stock":3},{"size":"2XS","stock":2},{"size":"3XS","stock":2}]}],"photo":"p/17.jpg"},{"code":"102849-907","name":"Форма баскетбольна майка і шорти Joma FINAL II","brand":"Joma","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2986","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Пояс","Еластичний пояс зі шнурком"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["2XL","XL","L","M","XS","4XS","5XS"],"colours":[{"name":"Жовтий-синій","swatch":"background: #ffff00;background: linear-gradient(135deg, #ffff00 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"2XL","stock":3},{"size":"XL","stock":3},{"size":"L","stock":3},{"size":"M","stock":3},{"size":"XS","stock":3},{"size":"4XS","stock":1},{"size":"5XS","stock":3}]}],"photo":"p/18.jpg"},{"code":"LD-8003","name":"Форма баскетбольна майка і шорти LIDONG Camo","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2857","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["XL","L","5XL","4XL","3XL","2XL"],"colours":[{"name":"Блакитний-помаранчевий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"XL","stock":11},{"size":"L","stock":11},{"size":"5XL","stock":11},{"size":"4XL","stock":11},{"size":"3XL","stock":11},{"size":"2XL","stock":11}]},{"name":"Червоний-жовтий","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"5XL","stock":11},{"size":"L","stock":11},{"size":"XL","stock":11},{"size":"2XL","stock":11},{"size":"4XL","stock":11},{"size":"3XL","stock":11}]},{"name":"Помаранчевий-чорний","swatch":"background: #ffa500;background: linear-gradient(135deg, #ffa500 0% 50%, #000000 50% 100%);","sizes":[{"size":"5XL","stock":11},{"size":"L","stock":11},{"size":"XL","stock":10},{"size":"2XL","stock":11},{"size":"4XL","stock":9},{"size":"3XL","stock":11}]},{"name":"Салатовий-чорний","swatch":"background: #99ff99;background: linear-gradient(135deg, #99ff99 0% 50%, #000000 50% 100%);","sizes":[{"size":"5XL","stock":9},{"size":"2XL","stock":11},{"size":"4XL","stock":11},{"size":"3XL","stock":11}]},{"name":"Сірий-помаранчевий","swatch":"background: #808080;background: linear-gradient(135deg, #808080 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"5XL","stock":11},{"size":"3XL","stock":11},{"size":"L","stock":11},{"size":"XL","stock":11},{"size":"2XL","stock":11},{"size":"4XL","stock":11}]},{"name":"Синій-помаранчевий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"5XL","stock":10},{"size":"L","stock":11},{"size":"XL","stock":11},{"size":"2XL","stock":1},{"size":"4XL","stock":6}]}],"photo":"p/19.jpg"},{"code":"L044","name":"Форма баскетбольна майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2746","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["3XS","2XS","XS","XL","2XL","3XL","4XL","5XL","S","L"],"colours":[{"name":"Білий-чорний","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #000000 50% 100%);","sizes":[{"size":"3XS","stock":10},{"size":"2XS","stock":10},{"size":"XS","stock":1},{"size":"XL","stock":8},{"size":"2XL","stock":8},{"size":"3XL","stock":9},{"size":"4XL","stock":9},{"size":"5XL","stock":9}]},{"name":"Жовтий-чорний","swatch":"background: #ffff00;background: linear-gradient(135deg, #ffff00 0% 50%, #000000 50% 100%);","sizes":[{"size":"XL","stock":9},{"size":"3XL","stock":3},{"size":"4XL","stock":10},{"size":"5XL","stock":9},{"size":"3XS","stock":10},{"size":"2XS","stock":9},{"size":"XS","stock":10},{"size":"S","stock":9}]},{"name":"Червоний-чорний","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #000000 50% 100%);","sizes":[{"size":"3XS","stock":10},{"size":"2XS","stock":10},{"size":"XS","stock":6},{"size":"XL","stock":3},{"size":"2XL","stock":10},{"size":"3XL","stock":10},{"size":"4XL","stock":10},{"size":"5XL","stock":10}]},{"name":"Помаранчевий-чорний","swatch":"background: #ffa500;background: linear-gradient(135deg, #ffa500 0% 50%, #000000 50% 100%);","sizes":[{"size":"3XS","stock":10},{"size":"2XS","stock":10},{"size":"XS","stock":3},{"size":"XL","stock":2},{"size":"3XL","stock":9},{"size":"4XL","stock":9},{"size":"5XL","stock":10}]},{"name":"Синій-білий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"5XL","stock":10},{"size":"3XS","stock":10},{"size":"2XS","stock":10},{"size":"XS","stock":10},{"size":"S","stock":8},{"size":"XL","stock":8},{"size":"2XL","stock":8},{"size":"3XL","stock":9},{"size":"4XL","stock":10}]},{"name":"Темно-синій-білий","swatch":"background: #00008b;background: linear-gradient(135deg, #00008b 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"3XS","stock":10},{"size":"2XS","stock":10},{"size":"XS","stock":9},{"size":"S","stock":5},{"size":"3XL","stock":6},{"size":"4XL","stock":10},{"size":"5XL","stock":10}]},{"name":"Чорний-червоний","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #ff0000 50% 100%);","sizes":[{"size":"3XS","stock":10},{"size":"2XS","stock":10},{"size":"XS","stock":10},{"size":"S","stock":4},{"size":"L","stock":3},{"size":"3XL","stock":5},{"size":"4XL","stock":9},{"size":"5XL","stock":10}]}],"photo":"p/20.jpg"},{"code":"L046","name":"Форма баскетбольна майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2746","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["L","XL","2XL","3XL","4XL","5XL","3XS","2XS","XS","S","M"],"colours":[{"name":"Білий-синій","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"L","stock":1},{"size":"XL","stock":9},{"size":"2XL","stock":10},{"size":"3XL","stock":10},{"size":"4XL","stock":10},{"size":"5XL","stock":10},{"size":"3XS","stock":10},{"size":"2XS","stock":10},{"size":"XS","stock":10},{"size":"S","stock":10},{"size":"M","stock":3}]},{"name":"Білий-чорний","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #000000 50% 100%);","sizes":[{"size":"3XS","stock":10},{"size":"2XS","stock":10},{"size":"XS","stock":10},{"size":"S","stock":4},{"size":"M","stock":1},{"size":"XL","stock":6},{"size":"2XL","stock":9},{"size":"3XL","stock":10},{"size":"4XL","stock":10},{"size":"5XL","stock":10}]},{"name":"Зелений-білий","swatch":"background: #008000;background: linear-gradient(135deg, #008000 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"3XS","stock":10},{"size":"2XS","stock":10},{"size":"XS","stock":10},{"size":"S","stock":9},{"size":"L","stock":3},{"size":"2XL","stock":4},{"size":"3XL","stock":6},{"size":"4XL","stock":10},{"size":"5XL","stock":9}]},{"name":"Синій-жовтий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"3XS","stock":8},{"size":"2XS","stock":6},{"size":"XS","stock":5},{"size":"S","stock":5},{"size":"XL","stock":1},{"size":"2XL","stock":4},{"size":"3XL","stock":5},{"size":"4XL","stock":6},{"size":"5XL","stock":7}]},{"name":"Чорний-червоний","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #ff0000 50% 100%);","sizes":[{"size":"3XS","stock":9},{"size":"2XS","stock":10},{"size":"XS","stock":8},{"size":"S","stock":10},{"size":"M","stock":10},{"size":"3XL","stock":5},{"size":"4XL","stock":9},{"size":"5XL","stock":9}]}],"photo":"p/21.jpg"},{"code":"L050","name":"Форма баскетбольна майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2746","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["6XL","3XS","XS","S","4XL","5XL","XL","2XL","3XL","2XS","L","M"],"colours":[{"name":"Жовтий-фіолетовий","swatch":"background: #ffff00;background: linear-gradient(135deg, #ffff00 0% 50%, #800080 50% 100%);","sizes":[{"size":"6XL","stock":5},{"size":"3XS","stock":10},{"size":"XS","stock":8},{"size":"S","stock":11},{"size":"4XL","stock":9},{"size":"5XL","stock":5}]},{"name":"Червоний-чорний","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #000000 50% 100%);","sizes":[{"size":"XS","stock":10},{"size":"S","stock":5},{"size":"XL","stock":4},{"size":"2XL","stock":10},{"size":"3XL","stock":10},{"size":"4XL","stock":9},{"size":"5XL","stock":5},{"size":"6XL","stock":5},{"size":"3XS","stock":10},{"size":"2XS","stock":10}]},{"name":"М'ятний-сірий","swatch":"background: #3eb489;background: linear-gradient(135deg, #3eb489 0% 50%, #808080 50% 100%);","sizes":[{"size":"3XS","stock":10},{"size":"2XS","stock":9},{"size":"XS","stock":10},{"size":"S","stock":8},{"size":"L","stock":2},{"size":"XL","stock":10},{"size":"2XL","stock":10},{"size":"3XL","stock":10},{"size":"4XL","stock":10},{"size":"5XL","stock":5},{"size":"6XL","stock":5}]},{"name":"Синій-червоний","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ff0000 50% 100%);","sizes":[{"size":"2XS","stock":10},{"size":"3XS","stock":10},{"size":"XS","stock":10}]},{"name":"Фіолетовий-чорний","swatch":"background: #800080;background: linear-gradient(135deg, #800080 0% 50%, #000000 50% 100%);","sizes":[{"size":"3XS","stock":10},{"size":"2XS","stock":10},{"size":"XS","stock":9},{"size":"S","stock":3},{"size":"M","stock":3},{"size":"L","stock":4},{"size":"XL","stock":5},{"size":"2XL","stock":6},{"size":"3XL","stock":5},{"size":"4XL","stock":8},{"size":"5XL","stock":4},{"size":"6XL","stock":4}]},{"name":"Чорний-червоний","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #ff0000 50% 100%);","sizes":[{"size":"S","stock":7},{"size":"M","stock":3},{"size":"XL","stock":7},{"size":"2XL","stock":10},{"size":"3XL","stock":9},{"size":"4XL","stock":10},{"size":"5XL","stock":5},{"size":"6XL","stock":4}]}],"photo":"p/22.jpg"},{"code":"L221","name":"Форма баскетбольна майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2746","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["3XL","4XL","5XL","6XL","S","M","L","XL","2XL"],"colours":[{"name":"Білий-синій","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"3XL","stock":1},{"size":"4XL","stock":6},{"size":"5XL","stock":5},{"size":"6XL","stock":5}]},{"name":"Жовтий-фіолетовий","swatch":"background: #ffff00;background: linear-gradient(135deg, #ffff00 0% 50%, #800080 50% 100%);","sizes":[{"size":"6XL","stock":5},{"size":"S","stock":6},{"size":"M","stock":6},{"size":"L","stock":10},{"size":"XL","stock":10},{"size":"2XL","stock":10},{"size":"3XL","stock":10},{"size":"4XL","stock":10},{"size":"5XL","stock":5}]},{"name":"Червоний-білий","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"S","stock":9},{"size":"M","stock":10},{"size":"L","stock":6},{"size":"XL","stock":4},{"size":"2XL","stock":5},{"size":"3XL","stock":10},{"size":"4XL","stock":10},{"size":"5XL","stock":4},{"size":"6XL","stock":5}]},{"name":"Синій-білий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"3XL","stock":9},{"size":"4XL","stock":8},{"size":"5XL","stock":4},{"size":"6XL","stock":3},{"size":"S","stock":7},{"size":"M","stock":2},{"size":"L","stock":7},{"size":"XL","stock":5},{"size":"2XL","stock":1}]},{"name":"Фіолетовий-жовтий","swatch":"background: #800080;background: linear-gradient(135deg, #800080 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"S","stock":9},{"size":"M","stock":3},{"size":"L","stock":7},{"size":"XL","stock":8},{"size":"2XL","stock":10},{"size":"3XL","stock":10},{"size":"4XL","stock":9},{"size":"5XL","stock":5},{"size":"6XL","stock":4}]},{"name":"Чорний-білий","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"L","stock":5},{"size":"3XL","stock":3},{"size":"6XL","stock":5},{"size":"S","stock":6},{"size":"M","stock":6}]}],"photo":"p/23.jpg"},{"code":"LD-8002","name":"Форма баскетбольна майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2857","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["5XL","3XL","2XL","4XL","L","XL"],"colours":[{"name":"Блакитний-білий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"5XL","stock":9}]},{"name":"Жовтий-синій","swatch":"background: #ffff00;background: linear-gradient(135deg, #ffff00 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"3XL","stock":4},{"size":"5XL","stock":10},{"size":"2XL","stock":5},{"size":"4XL","stock":7}]},{"name":"Червоний-синій","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"4XL","stock":11},{"size":"3XL","stock":11},{"size":"5XL","stock":11},{"size":"L","stock":5},{"size":"XL","stock":11},{"size":"2XL","stock":11}]},{"name":"Помаранчевий-чорний","swatch":"background: #ffa500;background: linear-gradient(135deg, #ffa500 0% 50%, #000000 50% 100%);","sizes":[{"size":"3XL","stock":11},{"size":"5XL","stock":11},{"size":"XL","stock":1},{"size":"2XL","stock":11}]},{"name":"Синій-помаранчевий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"3XL","stock":11},{"size":"2XL","stock":1},{"size":"XL","stock":11},{"size":"L","stock":2},{"size":"5XL","stock":11},{"size":"4XL","stock":11}]},{"name":"Чорний-помаранчевий","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"5XL","stock":11},{"size":"XL","stock":4},{"size":"2XL","stock":1},{"size":"4XL","stock":7}]}],"photo":"p/24.jpg"},{"code":"LD-8017","name":"Форма баскетбольна майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2857","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["XL","2XL","4XL","3XL","5XL","L"],"colours":[{"name":"Блакитний-білий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"XL","stock":5},{"size":"2XL","stock":6},{"size":"4XL","stock":11},{"size":"3XL","stock":6},{"size":"5XL","stock":11},{"size":"L","stock":1}]},{"name":"Червоний-білий","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"4XL","stock":11},{"size":"3XL","stock":9},{"size":"5XL","stock":11},{"size":"L","stock":11},{"size":"XL","stock":4}]},{"name":"Салатовий-чорний","swatch":"background: #99ff99;background: linear-gradient(135deg, #99ff99 0% 50%, #000000 50% 100%);","sizes":[{"size":"2XL","stock":6},{"size":"4XL","stock":7},{"size":"3XL","stock":11},{"size":"5XL","stock":11}]},{"name":"Синій-помаранчевий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"5XL","stock":9},{"size":"4XL","stock":2},{"size":"3XL","stock":5},{"size":"2XL","stock":10},{"size":"XL","stock":9}]}],"photo":"p/25.jpg"},{"code":"LD-8018","name":"Форма баскетбольна майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2857","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["L","5XL","3XL","4XL","2XL","XL"],"colours":[{"name":"Білий-синій","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"L","stock":10},{"size":"5XL","stock":7},{"size":"3XL","stock":4},{"size":"4XL","stock":9},{"size":"2XL","stock":5},{"size":"XL","stock":11}]},{"name":"Червоний-синій","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"L","stock":2},{"size":"XL","stock":10},{"size":"3XL","stock":4},{"size":"4XL","stock":7},{"size":"5XL","stock":11}]},{"name":"Синій-білий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"3XL","stock":2},{"size":"4XL","stock":11}]},{"name":"Чорний-салатовий","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #99ff99 50% 100%);","sizes":[{"size":"L","stock":2},{"size":"5XL","stock":4},{"size":"4XL","stock":1},{"size":"2XL","stock":1}]}],"photo":"p/26.jpg"},{"code":"LD-8019","name":"Форма баскетбольна майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2857","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["2XL","5XL","3XL","4XL","XL","L"],"colours":[{"name":"Білий-синій","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"2XL","stock":9},{"size":"5XL","stock":10},{"size":"3XL","stock":8},{"size":"4XL","stock":11}]},{"name":"Жовтий-чорний","swatch":"background: #ffff00;background: linear-gradient(135deg, #ffff00 0% 50%, #000000 50% 100%);","sizes":[{"size":"2XL","stock":10},{"size":"XL","stock":9},{"size":"5XL","stock":11},{"size":"3XL","stock":11},{"size":"4XL","stock":11}]},{"name":"Червоний-чорний","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #000000 50% 100%);","sizes":[{"size":"XL","stock":4},{"size":"L","stock":7},{"size":"5XL","stock":11},{"size":"3XL","stock":9},{"size":"4XL","stock":11},{"size":"2XL","stock":9}]},{"name":"Помаранчевий-синій","swatch":"background: #ffa500;background: linear-gradient(135deg, #ffa500 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"XL","stock":7},{"size":"5XL","stock":6},{"size":"3XL","stock":2},{"size":"4XL","stock":6},{"size":"2XL","stock":11}]},{"name":"Синій-помаранчевий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"L","stock":6},{"size":"XL","stock":4},{"size":"2XL","stock":4},{"size":"3XL","stock":11},{"size":"4XL","stock":10},{"size":"5XL","stock":11}]},{"name":"Чорний-червоний","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #ff0000 50% 100%);","sizes":[{"size":"5XL","stock":10},{"size":"3XL","stock":10},{"size":"4XL","stock":11}]}],"photo":"p/27.jpg"},{"code":"LD-8023","name":"Форма баскетбольна майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2857","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["XL","2XL","3XL","4XL","5XL","L"],"colours":[{"name":"Жовтий","swatch":"background: #ffff00;","sizes":[{"size":"XL","stock":8},{"size":"2XL","stock":6},{"size":"3XL","stock":1},{"size":"4XL","stock":1},{"size":"5XL","stock":11}]},{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"L","stock":9},{"size":"XL","stock":11},{"size":"2XL","stock":11},{"size":"4XL","stock":5},{"size":"5XL","stock":11}]},{"name":"Помаранчевий","swatch":"background: #ffa500;","sizes":[{"size":"L","stock":11},{"size":"XL","stock":11},{"size":"2XL","stock":11},{"size":"3XL","stock":11},{"size":"4XL","stock":11},{"size":"5XL","stock":11}]},{"name":"Синій","swatch":"background: #0000ff;","sizes":[{"size":"XL","stock":5},{"size":"2XL","stock":5},{"size":"5XL","stock":11}]},{"name":"Темно-синій","swatch":"background: #00008b;","sizes":[{"size":"XL","stock":6},{"size":"3XL","stock":4},{"size":"4XL","stock":11},{"size":"5XL","stock":11}]},{"name":"Чорний","swatch":"background: #000000;","sizes":[{"size":"3XL","stock":1},{"size":"4XL","stock":3},{"size":"5XL","stock":11}]}],"photo":"p/28.jpg"},{"code":"LD-8095","name":"Форма баскетбольна майка і шорти LIDONG","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2857","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["5XL","4XL","3XL","2XL","XL"],"colours":[{"name":"Білий","swatch":"background: #ffffff;","sizes":[{"size":"5XL","stock":5},{"size":"4XL","stock":11},{"size":"3XL","stock":2}]},{"name":"Блакитний","swatch":"background: #00bfff;","sizes":[{"size":"5XL","stock":11}]},{"name":"Жовтий","swatch":"background: #ffff00;","sizes":[{"size":"5XL","stock":10},{"size":"4XL","stock":2},{"size":"2XL","stock":1},{"size":"XL","stock":6}]},{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"XL","stock":11},{"size":"5XL","stock":11}]},{"name":"Салатовий","swatch":"background: #99ff99;","sizes":[{"size":"5XL","stock":11},{"size":"4XL","stock":3},{"size":"XL","stock":11}]},{"name":"Чорний","swatch":"background: #000000;","sizes":[{"size":"5XL","stock":3}]}],"photo":"p/29.jpg"},{"code":"LD-8007","name":"Форма баскетбольна майка і шорти LIDONG SPACE","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2857","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["5XL","L","4XL","3XL","2XL"],"colours":[{"name":"Помаранчевий-жовтий","swatch":"background: #ffa500;background: linear-gradient(135deg, #ffa500 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"5XL","stock":10},{"size":"L","stock":1},{"size":"4XL","stock":6},{"size":"3XL","stock":6}]},{"name":"Синій-салатовий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #99ff99 50% 100%);","sizes":[{"size":"5XL","stock":6},{"size":"4XL","stock":11},{"size":"3XL","stock":11}]},{"name":"Фіолетовий-бірюзовий","swatch":"background: #800080;background: linear-gradient(135deg, #800080 0% 50%, #40e0d0 50% 100%);","sizes":[{"size":"5XL","stock":6},{"size":"L","stock":1}]},{"name":"Чорний-малиновий","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #dc143c 50% 100%);","sizes":[{"size":"5XL","stock":11},{"size":"2XL","stock":7},{"size":"4XL","stock":1}]}],"photo":"p/30.jpg"},{"code":"LD-8093","name":"Форма баскетбольна майка і шорти LIDONG Star","brand":"LIDONG","kind":"Баскетбольна форма","set":"Майка / Шорти","age":"both","grid":"2857","specs":[["Вид","Баскетбольна форма"],["Комплектація","Майка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["5XL"],"colours":[{"name":"Жовтий-блакитний","swatch":"background: #ffff00;background: linear-gradient(135deg, #ffff00 0% 50%, #00bfff 50% 100%);","sizes":[{"size":"5XL","stock":1}]},{"name":"Червоний-жовтий","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"5XL","stock":11}]},{"name":"Чорний-салатовий","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #99ff99 50% 100%);","sizes":[{"size":"5XL","stock":7}]}],"photo":"p/31.jpg"}],"grids":{"2478":{"header":["Розмір виробника","Розмір одягу (UA)","Зріст, см","Обхват грудей, см","Вік, років"],"rows":[["Детский","","","",""],["S","34-36","125-135","68","6-7"],["M","36-38","135-140","70","7-8"],["L","38-40","140-145","72","8-9"],["115","40-42","145-155","76","10-12"],["120","42-44","155-165","82","12-14"]]},"2746":{"header":["Розмір виробника","Довжина футболки, см","Ширина футболки, см","Рекомендований зріст, см","Рекомендована вага, кг","Вік, років","Розмір одягу (UA)"],"rows":[["3XS","54","39","110-120","20-25","5-6","30-32"],["2XS","57,5","42","120-130","25-30","6-7","32"],["XS","61","45","130-140","30-35","8-10","34"],["S","64,5","48","140-150","35-40","10-12","34-36"],["M","68","50","150-160","40-45","","36-38"],["L","70,5","52","160-165","45-50","","42-44"],["XL","73","54","165-170","50-60","","44-46"],["2XL","75,5","56","170-175","60-70","","46-48"],["3XL","78","58","175-180","70-80","","48-50"],["4XL","80,5","60","180-185","80-90","","50-52"],["5XL","83","62","185-190","90-100","","52"],["6XL","85,5","64","190-195","100-105","","52-54"]]},"2857":{"header":["Розмір виробника","Розмір одягу (UA)","Зріст, см","Вага, кг","Ширина по грудях, см"],"rows":[["L","40-42","150-160","45-55","52"],["XL","44-46","160-165","55-65","54"],["2XL","46-48","165-170","65-75","56"],["3XL","48-50","170-175","75-85","58"],["4XL","50-52","175-180","85-95","60"],["5XL","52-54","180-185","95-105","63"]]},"2859":{"header":["Розмір виробника","Розмір одягу (UA)","Зріст, см","Обхват грудей, см","Обхват стегон, см","Обхват талії, см","Вік, років"],"rows":[[],["28-30","104-110","58","","","4"],["30-32","110-116","62","","","5"],["32","116-122","64","","","5-6"],["2XS","34","122-128","68","","","6-7"],["XS","34-36","128-134","70","","","8"],["S","36","134-150","72","","","9-10"],["M","38","150-162","76","","","12"],["L","40-42","162-177","82","","","14"],["XL","42-44","177","86","","","16"],[],["M","42","168","82","88","64",""],["L","44","170","86","92","66",""],["XL","46","172","90","96","70",""],["2XL","48","174","94","100","74",""],["3XL","50","176","98","104","78",""],[],["2XL","46","176","92","96","78",""],["3XL","48","180","96","100","82",""],["4XL","50","184","100","104","86",""],["5XL","52","188","104","108","90",""],["6XL","54","188","108","112","94",""]]},"2923":{"header":["Розмір виробника","Розмір одягу (UA)","Зріст, см","Обхват грудей, см","Обхват стегон, см","Обхват талії, см","Вік, років"],"rows":[[],["4XS","32","116-122","64","","","5-6"],["3XS","34","122-128","68","","","6-7"],["2XS","34-36","128-134","70","","","8"],["XS","36","134-150","72","","","9-10"],["S","38","150-162","76","","","12"],["M","40-42","162-177","82","","","14"]]},"2986":{"header":["Розмір виробника","Обхват грудей, см","Обхват талії, см","Обхват стегон, см","Зріст, см","Розмір одягу (UA)","Вік, років","Категория"],"rows":[["8XS-7XS","52-55","53-54","58-60","86-100","26-28","3-4","Детский"],["6XS","55-57","54-55","60-62","100-110","28-30","4-5","Детский"],["5XS","58-61","56-57","63-65","110-116","30-32","5-6","Детский"],["4XS","62-66","58-60","66-68","116-128","32-34","7-8","Детский"],["3XS","67-72","61-64","69-74","128-140","34-36","9-10","Детский"],["2XS","73-79","65-68","75-80","140-156","36-40","11-12","Детский"],["XS","80-86","68-74","80-85","160-165","42-44","","Взрослый"],["S","87-94","75-82","86-93","165-170","44-46","","Взрослый"],["M","95-101","83-90","94-100","170-175","46-48","","Взрослый"],["L","102-108","91-97","101-108","175-180","50-52","","Взрослый"],["XL","109-114","98-103","109-113","180-185","52-54","","Взрослый"],["2XL-3XL","115-126","104-115","114-125","185-195","56-60","","Взрослый"]]}}}</script>
+<script>
+  (function () {
+    var DATA = JSON.parse(document.getElementById('catalog-data').textContent);
+    var models = DATA.models;
+
+    var AGE_LABEL = { kids: 'Дитяча', adults: 'Доросла', both: 'Дитяча і доросла', unknown: 'Без позначки' };
+    var LETTERS = ['6XS', '5XS', '4XS', '3XS', '2XS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'];
+
+    var AGE_SHORT = { kids: 'Дитяча', adults: 'Доросла', both: 'Діти + дорослі', unknown: '' };
+
+    // Назви постачальника в межах категорії майже однакові ("Форма футбольна
+    // дитяча комплект футболка і шорти SP-Sport"), тому на картці показуємо те,
+    // що РІЗНЕ: клуб (у клубній формі) або вік + комплектацію. Повна назва
+    // лишається в картці моделі та у підказці.
+    function setOf(m) {
+      // "1 шт" — це кількість у пакуванні, а не комплектація: для гетр
+      // постачальник пише саме так, і як вид товару воно нічого не каже.
+      var set = m.set || '';
+      if (/^\d+\s*шт\.?$/i.test(set.trim())) set = '';
+      return set || m.kind || '';
+    }
+
+    function headline(m) {
+      var club = null;
+      (m.specs || []).forEach(function (pair) { if (pair[0] === 'Клуб / збірна') club = pair[1]; });
+      if (club) return club;
+      var set = setOf(m).replace(/\s*\/\s*/g, ' + ').toLowerCase();
+      var age = AGE_SHORT[m.age] || '';
+      if (age && set) return age + ' · ' + set;
+      if (set) return set.charAt(0).toUpperCase() + set.slice(1);
+      return m.name;
+    }
+
+    function plural(n, one, few, many) {
+      var mod10 = n % 10, mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return one;
+      if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+      return many;
+    }
+
+    function sizeRank(size) {
+      var s = String(size).trim();
+      var li = LETTERS.indexOf(s.toUpperCase());
+      if (li !== -1) return li;
+      // "S/S17/27-32-UKR", "M-39-41", "XL-45-48": літера стоїть попереду
+      var head = s.split(/[\/,\-]/)[0].trim().toUpperCase();
+      var hi = LETTERS.indexOf(head);
+      if (hi !== -1) return hi;
+      var num = parseInt(s, 10);
+      if (!isNaN(num)) return 100 + num;
+      return 500;
+    }
+    function sortSizes(list) { return list.slice().sort(function (a, b) { return sizeRank(a) - sizeRank(b); }); }
+
+    // Короткий підпис розміру для картки: "24, зріст 130-135" -> "24"
+    function shortSize(size) {
+      var s = String(size).trim();
+      // Діапазон на стопу показуємо цілим: "31-34" без нього читається як "31".
+      if (/^\d{1,3}\s*-\s*\d{1,3}$/.test(s)) return s;
+      var head = s.split(/[\/,]/)[0].trim();
+      var m = /^([0-9]{2,3}|[0-9]?X{0,4}[SML]|[2-5]X[SL])\b/i.exec(head);
+      return m ? m[1] : head;
+    }
+
+    function dateLabel(iso) {
+      var d = new Date(iso);
+      if (isNaN(d)) return '';
+      var months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
+      return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    var state = { q: '', age: null, kind: null, size: null };
+
+    var grid = document.getElementById('grid');
+    var empty = document.getElementById('empty');
+    var countEl = document.getElementById('count');
+    var totalEl = document.getElementById('total');
+    var resetBtn = document.getElementById('reset');
+
+    document.getElementById('meta').textContent =
+      models.length + ' ' + plural(models.length, 'модель', 'моделі', 'моделей') +
+      ' в наявності · оновлено ' + dateLabel(DATA.fetchedAt);
+    document.getElementById('footMeta').textContent =
+      DATA.note + '. Каталог оновлено ' + dateLabel(DATA.fetchedAt) + '.';
+    totalEl.textContent = models.length;
+
+    // --- фільтри, побудовані з реальних даних ---
+    function buildChips(rowId, values, key) {
+      var row = document.getElementById(rowId);
+      values.forEach(function (v) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip';
+        b.textContent = v.label;
+        b.setAttribute('aria-pressed', 'false');
+        b.addEventListener('click', function () {
+          state[key] = state[key] === v.value ? null : v.value;
+          syncChips();
+          render();
+        });
+        b.dataset.value = v.value;
+        b.dataset.key = key;
+        row.appendChild(b);
+      });
+    }
+
+    var ages = [];
+    ['kids', 'both', 'adults'].forEach(function (a) {
+      if (models.some(function (m) { return m.age === a; })) {
+        ages.push({ value: a, label: a === 'both' ? 'Дитяча і доросла' : AGE_LABEL[a] });
+      }
+    });
+    buildChips('ageRow', ages, 'age');
+
+    var kinds = [];
+    models.forEach(function (m) {
+      var k = setOf(m);
+      if (k && kinds.indexOf(k) === -1) kinds.push(k);
+    });
+    buildChips('kindRow', kinds.map(function (k) { return { value: k, label: k }; }), 'kind');
+
+    var sizeSet = [];
+    models.forEach(function (m) {
+      m.sizes.forEach(function (s) {
+        var short = shortSize(s);
+        if (sizeSet.indexOf(short) === -1) sizeSet.push(short);
+      });
+    });
+    buildChips('sizeRow', sortSizes(sizeSet).map(function (s) { return { value: s, label: s }; }), 'size');
+
+    function syncChips() {
+      Array.prototype.forEach.call(document.querySelectorAll('.chip'), function (b) {
+        b.setAttribute('aria-pressed', String(state[b.dataset.key] === b.dataset.value));
+      });
+      resetBtn.hidden = !(state.q || state.age || state.kind || state.size);
+    }
+
+    document.getElementById('q').addEventListener('input', function (e) {
+      state.q = e.target.value.trim().toLowerCase();
+      syncChips();
+      render();
+    });
+    resetBtn.addEventListener('click', function () {
+      state = { q: '', age: null, kind: null, size: null };
+      document.getElementById('q').value = '';
+      syncChips();
+      render();
+    });
+
+    function matches(m) {
+      if (state.age && m.age !== state.age) return false;
+      if (state.kind && setOf(m) !== state.kind) return false;
+      if (state.size && !m.sizes.some(function (s) { return shortSize(s) === state.size; })) return false;
+      if (state.q) {
+        var hay = (m.code + ' ' + m.name + ' ' + (m.brand || '') + ' ' +
+          m.colours.map(function (c) { return c.name; }).join(' ')).toLowerCase();
+        if (hay.indexOf(state.q) === -1) return false;
+      }
+      return true;
+    }
+
+    function swatchDot(colour) {
+      var d = document.createElement('span');
+      d.className = 'dot';
+      if (colour.swatch) d.setAttribute('style', colour.swatch);
+      else d.style.background = 'repeating-linear-gradient(45deg, #ccc 0 4px, #eee 4px 8px)';
+      d.title = colour.name;
+      return d;
+    }
+
+    function cardFor(m) {
+      var card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'card';
+
+      var shot = document.createElement('div');
+      shot.className = 'shot';
+      shot.style.setProperty('--n', m.colours.length);
+      shot.style.setProperty('--i', 0);
+      if (m.photo) {
+        var img = document.createElement('img');
+        img.src = m.photo;
+        img.alt = m.name;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        shot.appendChild(img);
+      }
+      if (m.colours.length > 1) {
+        var badge = document.createElement('span');
+        badge.className = 'shot__badge';
+        badge.textContent = m.colours.length + ' ' + plural(m.colours.length, 'колір', 'кольори', 'кольорів');
+        shot.appendChild(badge);
+      }
+      card.appendChild(shot);
+
+      var body = document.createElement('div');
+      body.className = 'card__body';
+
+      var name = document.createElement('div');
+      name.className = 'card__name';
+      name.textContent = headline(m);
+      name.title = m.name;
+      body.appendChild(name);
+
+      var code = document.createElement('div');
+      code.className = 'card__code';
+      code.textContent = m.code + (m.brand ? ' · ' + m.brand : '');
+      body.appendChild(code);
+
+      var dots = document.createElement('div');
+      dots.className = 'dots';
+      m.colours.slice(0, 6).forEach(function (c) { dots.appendChild(swatchDot(c)); });
+      if (m.colours.length > 6) {
+        var more = document.createElement('span');
+        more.className = 'dots__more';
+        more.textContent = '+' + (m.colours.length - 6);
+        dots.appendChild(more);
+      }
+      body.appendChild(dots);
+
+      var sizes = document.createElement('div');
+      sizes.className = 'sizes';
+      sortSizes(m.sizes.map(shortSize).filter(function (v, i, a) { return a.indexOf(v) === i; }))
+        .slice(0, 7)
+        .forEach(function (s) {
+          var el = document.createElement('span');
+          el.className = 'size';
+          el.textContent = s;
+          sizes.appendChild(el);
+        });
+      body.appendChild(sizes);
+
+      card.appendChild(body);
+      card.addEventListener('click', function () { openModel(m); });
+      return card;
+    }
+
+    function render() {
+      var list = models.filter(matches);
+      grid.textContent = '';
+      var frag = document.createDocumentFragment();
+      list.forEach(function (m) { frag.appendChild(cardFor(m)); });
+      grid.appendChild(frag);
+      countEl.textContent = list.length;
+      empty.hidden = list.length > 0;
+    }
+
+    // --- картка моделі ---
+    var dialog = document.getElementById('modelDialog');
+    var mBody = document.getElementById('mBody');
+
+    function block(label, node) {
+      var b = document.createElement('div');
+      b.className = 'block';
+      var l = document.createElement('div');
+      l.className = 'block__label';
+      l.textContent = label;
+      b.appendChild(l);
+      b.appendChild(node);
+      return b;
+    }
+
+    function openModel(m) {
+      document.getElementById('mTitle').textContent = m.name;
+      document.getElementById('mSub').textContent =
+        'Артикул ' + m.code + (m.brand ? ' · ' + m.brand : '') + ' · ' + AGE_LABEL[m.age];
+      mBody.textContent = '';
+
+      var shot = document.createElement('div');
+      shot.className = 'sheet__shot';
+      shot.style.setProperty('--n', m.colours.length);
+      shot.style.setProperty('--i', 0);
+      if (m.photo) {
+        var img = document.createElement('img');
+        img.src = m.photo;
+        img.alt = m.name;
+        shot.appendChild(img);
+      }
+      mBody.appendChild(shot);
+
+      var sizeWrap = document.createElement('div');
+      var swatches = document.createElement('div');
+      swatches.className = 'swatches';
+
+      function showColour(idx) {
+        shot.style.setProperty('--i', idx);
+        Array.prototype.forEach.call(swatches.children, function (btn, i) {
+          btn.setAttribute('aria-pressed', String(i === idx));
+        });
+        sizeWrap.textContent = '';
+        var list = document.createElement('div');
+        list.className = 'sizelist';
+        m.colours[idx].sizes.slice()
+          .sort(function (a, b) { return sizeRank(a.size) - sizeRank(b.size); })
+          .forEach(function (s) {
+            var el = document.createElement('span');
+            el.className = 'size';
+            el.appendChild(document.createTextNode(s.size));
+            var qty = document.createElement('b');
+            qty.className = 'size__qty';
+            qty.textContent = s.stock + ' шт';
+            el.appendChild(qty);
+            list.appendChild(el);
+          });
+        sizeWrap.appendChild(list);
+      }
+
+      m.colours.forEach(function (c, i) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'swatch';
+        btn.setAttribute('aria-pressed', 'false');
+        btn.appendChild(swatchDot(c));
+        btn.appendChild(document.createTextNode(c.name));
+        btn.addEventListener('click', function () { showColour(i); });
+        swatches.appendChild(btn);
+      });
+
+      mBody.appendChild(block(m.colours.length > 1 ? 'Кольори' : 'Колір', swatches));
+      mBody.appendChild(block('Є в наявності (розмір і залишок)', sizeWrap));
+      showColour(0);
+
+      var g = m.grid && DATA.grids[m.grid];
+      if (g) {
+        var scroller = document.createElement('div');
+        scroller.className = 'scroller';
+        var table = document.createElement('table');
+        var thead = document.createElement('thead');
+        var htr = document.createElement('tr');
+        g.header.forEach(function (h) {
+          var th = document.createElement('th');
+          th.textContent = h;
+          htr.appendChild(th);
+        });
+        thead.appendChild(htr);
+        table.appendChild(thead);
+        var tbody = document.createElement('tbody');
+        g.rows.forEach(function (row) {
+          var tr = document.createElement('tr');
+          row.forEach(function (cell, i) {
+            var td = document.createElement(i === 0 ? 'th' : 'td');
+            td.textContent = cell || '—';
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        scroller.appendChild(table);
+        mBody.appendChild(block('Розмірна таблиця виробника', scroller));
+      }
+
+      if (m.specs && m.specs.length) {
+        var dl = document.createElement('dl');
+        dl.className = 'specs';
+        m.specs.forEach(function (pair) {
+          var dt = document.createElement('dt');
+          dt.textContent = pair[0];
+          var dd = document.createElement('dd');
+          dd.textContent = pair[1];
+          dl.appendChild(dt);
+          dl.appendChild(dd);
+        });
+        mBody.appendChild(block('Характеристики', dl));
+      }
+
+      var order = document.createElement('div');
+      order.className = 'order';
+      order.innerHTML = 'Щоб замовити, напишіть у Direct артикул, колір і розмір: <code></code>';
+      var firstSize = m.colours[0].sizes.slice()
+        .sort(function (a, b) { return sizeRank(a.size) - sizeRank(b.size); })[0];
+      order.querySelector('code').textContent = m.code + ' · ' + m.colours[0].name + ' · ' + firstSize.size;
+      mBody.appendChild(order);
+
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+      mBody.scrollTop = 0;
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-close]'), function (btn) {
+      btn.addEventListener('click', function () { btn.closest('dialog').close(); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('dialog'), function (d) {
+      d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
+    });
+    document.getElementById('helpBtn').addEventListener('click', function () {
+      document.getElementById('helpDialog').showModal();
+    });
+
+    syncChips();
+    render();
+  })();
+</script>
