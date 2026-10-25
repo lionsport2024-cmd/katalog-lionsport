@@ -1,0 +1,899 @@
+<title>Волейбольна форма</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap">
+<style>
+  :root {
+    --bg: #F1F2EC;
+    --surface: #FFFFFF;
+    --surface-2: #FAFAF6;
+    --ink: #16211B;
+    --muted: #63706A;
+    --line: #DDE2D8;
+    --line-strong: #C6CEC2;
+    --accent: #10654A;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #E0EFE6;
+    --chip: #FFFFFF;
+    --shadow: 0 1px 2px rgba(22, 33, 27, .06), 0 8px 24px rgba(22, 33, 27, .06);
+    --radius: 14px;
+    --display: "Unbounded", "Commissioner", system-ui, sans-serif;
+    --body: "Commissioner", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11150F;
+      --surface: #1A1F19;
+      --surface-2: #161B15;
+      --ink: #E9EEE6;
+      --muted: #9CA99A;
+      --line: #2A322A;
+      --line-strong: #3A443A;
+      --accent: #5BC38F;
+      --accent-ink: #0C1610;
+      --accent-soft: #1D2B22;
+      --chip: #1F261E;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11150F;
+    --surface: #1A1F19;
+    --surface-2: #161B15;
+    --ink: #E9EEE6;
+    --muted: #9CA99A;
+    --line: #2A322A;
+    --line-strong: #3A443A;
+    --accent: #5BC38F;
+    --accent-ink: #0C1610;
+    --accent-soft: #1D2B22;
+    --chip: #1F261E;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-text-size-adjust: 100%;
+  }
+  h1, h2, h3 { margin: 0; text-wrap: balance; }
+
+  /* ---------- шапка ---------- */
+  .top {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 30;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .top__inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .brand__name {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -.01em;
+    line-height: 1.15;
+  }
+  .brand__meta { font-size: 11.5px; color: var(--muted); }
+  .top__actions { margin-left: auto; display: flex; gap: 8px; }
+  .btn {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 7px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn--solid { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .btn--solid:hover { color: var(--accent-ink); opacity: .92; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- фільтри ---------- */
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; }
+  .filters { padding-block: 14px 6px; display: flex; flex-direction: column; gap: 10px; }
+  .search {
+    width: 100%;
+    font: inherit;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .search::placeholder { color: var(--muted); }
+  .chiprow { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+  .chiprow::-webkit-scrollbar { display: none; }
+  .chiprow__label {
+    align-self: center;
+    font-size: 10.5px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    flex: none;
+    padding-right: 2px;
+  }
+  .chip {
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    flex: none;
+    background: var(--chip);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  .chip[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 600;
+  }
+  .countline {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding-block: 10px 4px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .countline strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .linkish {
+    font: inherit;
+    font-size: 13px;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  /* ---------- сітка карток ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+    gap: 14px;
+    padding-block: 8px 40px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    padding: 0;
+    cursor: pointer;
+  }
+  .card:hover { border-color: var(--line-strong); box-shadow: var(--shadow); }
+  .shot {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: #fff;
+  }
+  .shot img {
+    position: absolute;
+    top: 0;
+    left: calc(-100% * var(--i, 0));
+    height: 100%;
+    width: calc(100% * var(--n, 1));
+    max-width: none;
+    object-fit: cover;
+    display: block;
+  }
+  .shot__none {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--surface-2);
+  }
+  .shot__badge {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    background: rgba(255, 255, 255, .92);
+    color: #16211B;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+  }
+  .card__body { padding: 10px 11px 12px; display: flex; flex-direction: column; gap: 7px; }
+  .card__name {
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card__code {
+    font-size: 11.5px;
+    color: var(--muted);
+    letter-spacing: .04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .dots { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    flex: none;
+  }
+  .dots__more { font-size: 11px; color: var(--muted); }
+  .sizes { display: flex; flex-wrap: wrap; gap: 4px; }
+  .size {
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 6px;
+    padding: 2px 6px;
+    white-space: nowrap;
+  }
+  .size--plain { background: var(--surface-2); color: var(--muted); font-weight: 500; }
+
+  .empty {
+    padding: 40px 0 60px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* ---------- діалоги ---------- */
+  dialog {
+    border: 0;
+    padding: 0;
+    background: var(--surface);
+    color: var(--ink);
+    width: min(560px, 100%);
+    max-width: 100%;
+    max-height: 92dvh;
+    border-radius: 18px 18px 0 0;
+    margin: auto auto 0;
+  }
+  @media (min-width: 720px) {
+    dialog { border-radius: 18px; margin: auto; max-height: 88dvh; }
+  }
+  dialog::backdrop { background: rgba(10, 16, 12, .55); backdrop-filter: blur(2px); }
+  .sheet { display: flex; flex-direction: column; max-height: inherit; }
+  .sheet__head {
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 16px 12px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    z-index: 2;
+  }
+  .sheet__title { font-size: 15px; font-weight: 600; line-height: 1.3; }
+  .sheet__sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .sheet__close {
+    margin-left: auto;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .sheet__body { overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 18px; }
+  .sheet__shot {
+    position: relative;
+    aspect-ratio: 1;
+    max-width: 320px;
+    width: 100%;
+    margin-inline: auto;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .sheet__shot img {
+    position: absolute;
+    top: 0;
+    left: calc(-100% * var(--i, 0));
+    height: 100%;
+    width: calc(100% * var(--n, 1));
+    max-width: none;
+    object-fit: cover;
+    display: block;
+  }
+  .block { display: flex; flex-direction: column; gap: 8px; }
+  .block__label {
+    font-size: 10.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+  .swatch {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font: inherit;
+    font-size: 12.5px;
+    background: var(--chip);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 11px 5px 6px;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .swatch[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .swatch .dot { width: 16px; height: 16px; }
+  .sizelist { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sizelist .size {
+    font-size: 12.5px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .size__qty {
+    font-weight: 500;
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+    opacity: .7;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  .scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+  th, td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  thead th {
+    background: var(--surface-2);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: none;
+  }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+  tbody th { font-weight: 600; }
+  .specs { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 13px; }
+  .specs dt { color: var(--muted); }
+  .specs dd { margin: 0; }
+  .order {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .order code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12.5px;
+    background: var(--surface);
+    border-radius: 6px;
+    padding: 1px 5px;
+  }
+  .prose { font-size: 13.5px; color: var(--ink); display: flex; flex-direction: column; gap: 10px; }
+  .prose ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; }
+  .foot {
+    border-top: 1px solid var(--line);
+    padding-block: 18px 34px;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<header class="top">
+  <div class="top__inner">
+    <div class="brand">
+      <h1 class="brand__name">Волейбольна форма</h1>
+      <span class="brand__meta" id="meta"></span>
+    </div>
+    <div class="top__actions">
+      <button class="btn" type="button" id="helpBtn">Як обрати розмір</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="filters">
+    <input class="search" id="q" type="search" autocomplete="off" placeholder="Пошук: артикул, назва, бренд">
+    <div class="chiprow" id="ageRow"><span class="chiprow__label">Вік</span></div>
+    <div class="chiprow" id="kindRow"><span class="chiprow__label">Вид</span></div>
+    <div class="chiprow" id="sizeRow"><span class="chiprow__label">Розмір</span></div>
+  </section>
+
+  <div class="countline">
+    <span>Показано <strong id="count">0</strong> з <strong id="total">0</strong></span>
+    <button class="linkish" type="button" id="reset" hidden>Скинути фільтри</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty" hidden>За цими фільтрами нічого немає. Спробуйте скинути фільтри.</p>
+
+  <footer class="foot">
+    <span id="footMeta"></span>
+    <span>Наявність і розміри — станом на дату оновлення каталогу. Перед замовленням уточнюйте, будь ласка, у Direct.</span>
+  </footer>
+</main>
+
+<dialog id="modelDialog" aria-label="Картка моделі">
+  <div class="sheet">
+    <div class="sheet__head">
+      <div>
+        <div class="sheet__title" id="mTitle"></div>
+        <div class="sheet__sub" id="mSub"></div>
+      </div>
+      <button class="sheet__close" type="button" data-close aria-label="Закрити">&times;</button>
+    </div>
+    <div class="sheet__body" id="mBody"></div>
+  </div>
+</dialog>
+
+<dialog id="helpDialog" aria-label="Як обрати розмір">
+  <div class="sheet">
+    <div class="sheet__head">
+      <div>
+        <div class="sheet__title">Як обрати розмір</div>
+        <div class="sheet__sub">Мірки знімають по тілу, не по одягу</div>
+      </div>
+      <button class="sheet__close" type="button" data-close aria-label="Закрити">&times;</button>
+    </div>
+    <div class="sheet__body">
+      <div class="prose">
+        <p>У кожної моделі — своя розмірна таблиця виробника. Відкрийте картку моделі: таблиця стоїть одразу під розмірами, які є в наявності.</p>
+        <ul>
+          <li><strong>Зріст</strong> — без взуття, від підлоги до маківки. Для дитячих комплектів це головна мірка.</li>
+          <li><strong>Обхват грудей</strong> — по найширшій точці, сантиметр не затягувати.</li>
+          <li>Якщо мірка на межі двох розмірів, беріть більший: форма має сидіти вільно.</li>
+          <li>Розміри виробника (3XS, 2XS, XS…) не збігаються з українськими — дивіться стовпчик «Розмір одягу (UA)» у таблиці моделі.</li>
+        </ul>
+        <p>Не впевнені — напишіть зріст і вік дитини в Direct, підкажу розмір.</p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script id="catalog-data" type="application/json">{"slug":"volleyball","title":"Волейбольна форма","note":"Жіночі та чоловічі комплекти","fetchedAt":"2026-10-25T08:15:24.455Z","models":[{"code":"LD-P818","name":"Форма волейбольна дитяча LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"kids","grid":"2077","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["3XS","2XS","XS"],"colours":[{"name":"Білий-блакитний","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #00bfff 50% 100%);","sizes":[{"size":"3XS","stock":11},{"size":"2XS","stock":4},{"size":"XS","stock":4}]},{"name":"Блакитний-жовтий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"3XS","stock":7},{"size":"2XS","stock":3}]},{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"3XS","stock":10},{"size":"2XS","stock":9}]},{"name":"Чорний","swatch":"background: #000000;","sizes":[{"size":"3XS","stock":9},{"size":"2XS","stock":6}]}],"photo":"p/1.jpg"},{"code":"7320-8808","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["L","XL","2XL","S","M"],"colours":[{"name":"Блакитний-салатовий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #99ff99 50% 100%);","sizes":[{"size":"L","stock":10},{"size":"XL","stock":11},{"size":"2XL","stock":5},{"size":"S","stock":6},{"size":"M","stock":10}]},{"name":"Салатовий-блакитний","swatch":"background: #99ff99;background: linear-gradient(135deg, #99ff99 0% 50%, #00bfff 50% 100%);","sizes":[{"size":"S","stock":1},{"size":"M","stock":11},{"size":"L","stock":11},{"size":"XL","stock":11},{"size":"2XL","stock":3}]},{"name":"Чорний-салатовий","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #99ff99 50% 100%);","sizes":[{"size":"S","stock":3},{"size":"2XL","stock":2}]}],"photo":"p/2.jpg"},{"code":"7330-8808","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["XL","L","S","M","2XL"],"colours":[{"name":"Червоний-жовтий-білий","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 33%, #ffff00 33% 66%, #ffffff 66% 100%);","sizes":[{"size":"XL","stock":6},{"size":"L","stock":7}]},{"name":"Червоний-жовтий-темно-синій","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 33%, #ffff00 33% 66%, #00008b 66% 100%);","sizes":[{"size":"S","stock":4},{"size":"M","stock":10},{"size":"XL","stock":1},{"size":"2XL","stock":1}]},{"name":"Салатовий-помаранчевий-синій","swatch":"background: #99ff99;background: linear-gradient(135deg, #99ff99 0% 33%, #ffa500 33% 66%, #0000ff 66% 100%);","sizes":[{"size":"S","stock":5},{"size":"M","stock":7},{"size":"L","stock":10},{"size":"XL","stock":8},{"size":"2XL","stock":3}]},{"name":"Кольори в асортименті","swatch":"background: linear-gradient(135deg, red, orange, yellow, green, blue, indigo, violet);","sizes":[{"size":"S","stock":4},{"size":"M","stock":10},{"size":"L","stock":10},{"size":"XL","stock":9},{"size":"2XL","stock":6}]}],"photo":"p/3.jpg"},{"code":"7370-8808","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["S","M","L","XL","2XL","3XL"],"colours":[{"name":"Бірюзовий-фіолетовий","swatch":"background: #40e0d0;background: linear-gradient(135deg, #40e0d0 0% 50%, #800080 50% 100%);","sizes":[{"size":"S","stock":2},{"size":"M","stock":10},{"size":"L","stock":10},{"size":"XL","stock":5},{"size":"2XL","stock":2}]},{"name":"Блакитний-салатовий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #99ff99 50% 100%);","sizes":[{"size":"3XL","stock":5},{"size":"S","stock":4},{"size":"M","stock":10},{"size":"L","stock":11},{"size":"XL","stock":5},{"size":"2XL","stock":5}]}],"photo":"p/4.jpg"},{"code":"7372-8808","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["2XL","L","XL"],"colours":[{"name":"Темно-синій-блакитний-фіолетовий","swatch":"background: #00008b;background: linear-gradient(135deg, #00008b 0% 33%, #00bfff 33% 66%, #800080 66% 100%);","sizes":[{"size":"2XL","stock":2},{"size":"L","stock":9},{"size":"XL","stock":11}]}],"photo":"p/5.jpg"},{"code":"LD-1808B","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["3XL","2XL","XL","M","S"],"colours":[{"name":"Салатовий-синій","swatch":"background: #99ff99;background: linear-gradient(135deg, #99ff99 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"3XL","stock":3},{"size":"2XL","stock":1},{"size":"XL","stock":2},{"size":"M","stock":1},{"size":"S","stock":3}]},{"name":"Синій-помаранчевий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"3XL","stock":3},{"size":"2XL","stock":3},{"size":"M","stock":3},{"size":"S","stock":5}]},{"name":"Темно-синій-салатовий","swatch":"background: #00008b;background: linear-gradient(135deg, #00008b 0% 50%, #99ff99 50% 100%);","sizes":[{"size":"M","stock":3},{"size":"S","stock":4}]}],"photo":"p/6.jpg"},{"code":"LD-1811B","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","S","L","XL","2XL"],"colours":[{"name":"Синій-помаранчевий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"M","stock":1},{"size":"S","stock":3}]},{"name":"Темно-синій-фіолетовий","swatch":"background: #00008b;background: linear-gradient(135deg, #00008b 0% 50%, #800080 50% 100%);","sizes":[{"size":"M","stock":2},{"size":"L","stock":1},{"size":"XL","stock":1},{"size":"2XL","stock":2}]}],"photo":"p/7.jpg"},{"code":"LD-1812B","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["S","M","L","XL","2XL","3XL"],"colours":[{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"S","stock":5},{"size":"M","stock":4},{"size":"L","stock":4},{"size":"XL","stock":4},{"size":"2XL","stock":3},{"size":"3XL","stock":2}]},{"name":"Темно-синій","swatch":"background: #00008b;","sizes":[{"size":"S","stock":1},{"size":"XL","stock":4},{"size":"2XL","stock":2},{"size":"3XL","stock":3}]},{"name":"Чорний","swatch":"background: #000000;","sizes":[{"size":"S","stock":4},{"size":"M","stock":1},{"size":"L","stock":2},{"size":"XL","stock":2},{"size":"2XL","stock":2},{"size":"3XL","stock":2}]}],"photo":"p/8.jpg"},{"code":"LD-1822B","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["3XL","S","M","2XL"],"colours":[{"name":"Блакитний","swatch":"background: #00bfff;","sizes":[{"size":"3XL","stock":3},{"size":"S","stock":4},{"size":"M","stock":1}]},{"name":"Жовтий","swatch":"background: #ffff00;","sizes":[{"size":"S","stock":5},{"size":"2XL","stock":3},{"size":"3XL","stock":2}]},{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"S","stock":4},{"size":"M","stock":1},{"size":"2XL","stock":3},{"size":"3XL","stock":3}]}],"photo":"p/9.jpg"},{"code":"LD-1839B","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["3XL","2XL","XL","L","M","S"],"colours":[{"name":"Блакитний-жовтий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"3XL","stock":5},{"size":"2XL","stock":5},{"size":"XL","stock":5},{"size":"L","stock":7},{"size":"M","stock":7},{"size":"S","stock":2}]},{"name":"Фіолетовий-рожевий","swatch":"background: #800080;background: linear-gradient(135deg, #800080 0% 50%, #ffc0cb 50% 100%);","sizes":[{"size":"3XL","stock":5},{"size":"2XL","stock":5},{"size":"XL","stock":2},{"size":"L","stock":4},{"size":"M","stock":6},{"size":"S","stock":5}]}],"photo":"p/10.jpg"},{"code":"LD-3802","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["3XL"],"colours":[{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"3XL","stock":2}]}],"photo":"p/11.jpg"},{"code":"LD-P812","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["S","M","L","2XL","3XL"],"colours":[{"name":"Блакитний","swatch":"background: #00bfff;","sizes":[{"size":"S","stock":3},{"size":"M","stock":5},{"size":"L","stock":5},{"size":"2XL","stock":1}]},{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"S","stock":1},{"size":"3XL","stock":1}]}],"photo":"p/12.jpg"},{"code":"LD-P820","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["S","M","L","XL","2XL","3XL"],"colours":[{"name":"Білий-блакитний","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #00bfff 50% 100%);","sizes":[{"size":"S","stock":5},{"size":"M","stock":5},{"size":"L","stock":10},{"size":"XL","stock":11},{"size":"2XL","stock":10},{"size":"3XL","stock":11}]},{"name":"Блакитний-жовтий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"2XL","stock":3},{"size":"3XL","stock":6},{"size":"L","stock":10}]},{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"S","stock":3},{"size":"M","stock":5},{"size":"L","stock":6},{"size":"XL","stock":6},{"size":"2XL","stock":5},{"size":"3XL","stock":5}]},{"name":"Чорний","swatch":"background: #000000;","sizes":[{"size":"S","stock":1},{"size":"M","stock":2},{"size":"L","stock":5},{"size":"XL","stock":10},{"size":"2XL","stock":10},{"size":"3XL","stock":10}]}],"photo":"p/13.jpg"},{"code":"LD-P824","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["L","XL","2XL","3XL","S","M"],"colours":[{"name":"Білий","swatch":"background: #ffffff;","sizes":[{"size":"L","stock":2},{"size":"XL","stock":5},{"size":"2XL","stock":3},{"size":"3XL","stock":3},{"size":"S","stock":1}]},{"name":"Блакитний","swatch":"background: #00bfff;","sizes":[{"size":"S","stock":4},{"size":"M","stock":1},{"size":"XL","stock":5},{"size":"2XL","stock":4},{"size":"3XL","stock":3}]}],"photo":"p/14.jpg"},{"code":"LD-P828","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["S","M","L","XL","2XL","3XL"],"colours":[{"name":"Білий","swatch":"background: #ffffff;","sizes":[{"size":"S","stock":7},{"size":"M","stock":3},{"size":"L","stock":2},{"size":"XL","stock":3},{"size":"2XL","stock":4},{"size":"3XL","stock":3}]},{"name":"Блакитний","swatch":"background: #00bfff;","sizes":[{"size":"S","stock":4},{"size":"M","stock":4},{"size":"L","stock":5},{"size":"XL","stock":6},{"size":"2XL","stock":5},{"size":"3XL","stock":6}]}],"photo":"p/15.jpg"},{"code":"LD-P836","name":"Форма волейбольна жіноча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2673","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","L","XL","2XL","3XL","S"],"colours":[{"name":"Блакитний","swatch":"background: #00bfff;","sizes":[{"size":"M","stock":2},{"size":"L","stock":3},{"size":"XL","stock":5},{"size":"2XL","stock":5},{"size":"3XL","stock":3}]},{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"S","stock":2},{"size":"XL","stock":5},{"size":"2XL","stock":4},{"size":"3XL","stock":4}]},{"name":"Темно-синій","swatch":"background: #00008b;","sizes":[{"size":"M","stock":2},{"size":"XL","stock":1},{"size":"2XL","stock":1},{"size":"3XL","stock":2}]}],"photo":"p/16.jpg"},{"code":"CO-845","name":"Форма волейбольна жіноча футболка і шорти SP-Sport","brand":"SP-Sport","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2797","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["3XL","M","XL","L","2XL"],"colours":[{"name":"Білий-чорний","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #000000 50% 100%);","sizes":[{"size":"3XL","stock":2},{"size":"M","stock":5},{"size":"XL","stock":11}]},{"name":"Синій-білий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"L","stock":11},{"size":"XL","stock":11},{"size":"2XL","stock":2},{"size":"3XL","stock":2}]},{"name":"Чорний-білий","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"XL","stock":7},{"size":"2XL","stock":2},{"size":"3XL","stock":5}]}],"photo":"p/17.jpg"},{"code":"PQ231","name":"Форма волейбольна жіноча футболка і шорти SP-Sport","brand":"SP-Sport","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2797","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["XL","3XL","M","L","2XL"],"colours":[{"name":"Червоний-білий","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"XL","stock":7},{"size":"3XL","stock":7}]},{"name":"Кольори в асортименті","swatch":"background: linear-gradient(135deg, red, orange, yellow, green, blue, indigo, violet);","sizes":[{"size":"3XL","stock":1},{"size":"M","stock":5},{"size":"L","stock":8},{"size":"XL","stock":3},{"size":"2XL","stock":7}]},{"name":"Чорний-сірий","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #808080 50% 100%);","sizes":[{"size":"L","stock":1},{"size":"2XL","stock":2},{"size":"3XL","stock":5}]}],"photo":"p/18.jpg"},{"code":"PQ233","name":"Форма волейбольна жіноча футболка і шорти SP-Sport","brand":"SP-Sport","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2797","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["M","L","XL","2XL","3XL"],"colours":[{"name":"Жовтий-блакитний","swatch":"background: #ffff00;background: linear-gradient(135deg, #ffff00 0% 50%, #00bfff 50% 100%);","sizes":[{"size":"M","stock":11},{"size":"L","stock":11},{"size":"XL","stock":11},{"size":"2XL","stock":6},{"size":"3XL","stock":6}]},{"name":"Червоний-чорний","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 50%, #000000 50% 100%);","sizes":[{"size":"M","stock":4},{"size":"L","stock":2},{"size":"XL","stock":2},{"size":"2XL","stock":8},{"size":"3XL","stock":7}]},{"name":"Сірий-білий","swatch":"background: #808080;background: linear-gradient(135deg, #808080 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"M","stock":10},{"size":"L","stock":11},{"size":"XL","stock":10},{"size":"2XL","stock":9},{"size":"3XL","stock":4}]}],"photo":"p/19.jpg"},{"code":"LD-1808A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","2XL","3XL","4XL","L","XL"],"colours":[{"name":"Салатовий-синій","swatch":"background: #99ff99;background: linear-gradient(135deg, #99ff99 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"M","stock":2},{"size":"2XL","stock":1},{"size":"3XL","stock":2}]},{"name":"Синій-помаранчевий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"2XL","stock":3},{"size":"4XL","stock":2},{"size":"M","stock":2},{"size":"L","stock":1},{"size":"XL","stock":1}]},{"name":"Темно-синій-салатовий","swatch":"background: #00008b;background: linear-gradient(135deg, #00008b 0% 50%, #99ff99 50% 100%);","sizes":[{"size":"2XL","stock":2}]}],"photo":"p/20.jpg"},{"code":"LD-1811A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","L","2XL","3XL","4XL"],"colours":[{"name":"Синій-помаранчевий","swatch":"background: #0000ff;background: linear-gradient(135deg, #0000ff 0% 50%, #ffa500 50% 100%);","sizes":[{"size":"M","stock":3},{"size":"L","stock":1},{"size":"2XL","stock":2},{"size":"3XL","stock":2},{"size":"4XL","stock":3}]},{"name":"Темно-синій-фіолетовий","swatch":"background: #00008b;background: linear-gradient(135deg, #00008b 0% 50%, #800080 50% 100%);","sizes":[{"size":"L","stock":1},{"size":"3XL","stock":1},{"size":"4XL","stock":1}]}],"photo":"p/21.jpg"},{"code":"LD-1812A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","L","4XL","2XL","3XL"],"colours":[{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"M","stock":3},{"size":"L","stock":4},{"size":"4XL","stock":1}]},{"name":"Темно-синій","swatch":"background: #00008b;","sizes":[{"size":"M","stock":1},{"size":"2XL","stock":2},{"size":"3XL","stock":3},{"size":"4XL","stock":3}]}],"photo":"p/22.jpg"},{"code":"LD-1817A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","3XL","4XL","2XL"],"colours":[{"name":"Блакитний-чорний","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #000000 50% 100%);","sizes":[{"size":"M","stock":4},{"size":"3XL","stock":3},{"size":"4XL","stock":3}]},{"name":"Помаранчевий-синій","swatch":"background: #ffa500;background: linear-gradient(135deg, #ffa500 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"2XL","stock":3},{"size":"3XL","stock":3},{"size":"4XL","stock":2}]}],"photo":"p/23.jpg"},{"code":"LD-1822A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["2XL","3XL","4XL","XL","M","L"],"colours":[{"name":"Блакитний","swatch":"background: #00bfff;","sizes":[{"size":"2XL","stock":4},{"size":"3XL","stock":2},{"size":"4XL","stock":3},{"size":"XL","stock":3}]},{"name":"Жовтий","swatch":"background: #ffff00;","sizes":[{"size":"M","stock":5},{"size":"L","stock":5},{"size":"3XL","stock":1},{"size":"4XL","stock":3}]},{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"M","stock":3},{"size":"L","stock":5}]}],"photo":"p/24.jpg"},{"code":"LD-1834A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","L","XL","2XL","3XL","4XL"],"colours":[{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"M","stock":4},{"size":"L","stock":4},{"size":"XL","stock":2},{"size":"2XL","stock":3},{"size":"3XL","stock":3},{"size":"4XL","stock":3}]},{"name":"Салатовий","swatch":"background: #99ff99;","sizes":[{"size":"M","stock":3},{"size":"XL","stock":1},{"size":"2XL","stock":2},{"size":"3XL","stock":3},{"size":"4XL","stock":4}]},{"name":"Темно-синій","swatch":"background: #00008b;","sizes":[{"size":"M","stock":3},{"size":"L","stock":3},{"size":"XL","stock":3},{"size":"2XL","stock":2},{"size":"3XL","stock":1},{"size":"4XL","stock":3}]}],"photo":"p/25.jpg"},{"code":"LD-1835A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["4XL","2XL","M","3XL","XL"],"colours":[{"name":"Блакитний-жовтий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"4XL","stock":2},{"size":"2XL","stock":1},{"size":"M","stock":1}]},{"name":"Салатовий-блакитний","swatch":"background: #99ff99;background: linear-gradient(135deg, #99ff99 0% 50%, #00bfff 50% 100%);","sizes":[{"size":"3XL","stock":1},{"size":"2XL","stock":4},{"size":"XL","stock":5}]}],"photo":"p/26.jpg"},{"code":"LD-1836A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","L","XL","3XL","4XL"],"colours":[{"name":"Блакитний","swatch":"background: #00bfff;","sizes":[{"size":"M","stock":5},{"size":"L","stock":4},{"size":"XL","stock":1},{"size":"3XL","stock":1}]},{"name":"Темно-синій","swatch":"background: #00008b;","sizes":[{"size":"4XL","stock":2}]}],"photo":"p/27.jpg"},{"code":"LD-1837A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","2XL","3XL","4XL","L"],"colours":[{"name":"Білий-синій","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #0000ff 50% 100%);","sizes":[{"size":"M","stock":1},{"size":"2XL","stock":3},{"size":"3XL","stock":3},{"size":"4XL","stock":3}]},{"name":"Блакитний-рожевий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #ffc0cb 50% 100%);","sizes":[{"size":"3XL","stock":3},{"size":"4XL","stock":2},{"size":"M","stock":3},{"size":"L","stock":1}]}],"photo":"p/28.jpg"},{"code":"LD-1839A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["L","XL","2XL","3XL","M"],"colours":[{"name":"Блакитний-жовтий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"L","stock":4},{"size":"XL","stock":2},{"size":"2XL","stock":6},{"size":"3XL","stock":4},{"size":"M","stock":3}]}],"photo":"p/29.jpg"},{"code":"LD-1840A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","L","2XL"],"colours":[{"name":"Блакитний-білий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #ffffff 50% 100%);","sizes":[{"size":"M","stock":5},{"size":"L","stock":4}]},{"name":"Темно-синій-жовтий","swatch":"background: #00008b;background: linear-gradient(135deg, #00008b 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"M","stock":3},{"size":"L","stock":1},{"size":"2XL","stock":1}]}],"photo":"p/30.jpg"},{"code":"LD-1841A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["4XL","M","2XL","3XL"],"colours":[{"name":"Блакитний","swatch":"background: #00bfff;","sizes":[{"size":"4XL","stock":3},{"size":"M","stock":5},{"size":"2XL","stock":5},{"size":"3XL","stock":3}]},{"name":"Фіолетовий","swatch":"background: #800080;","sizes":[{"size":"M","stock":3},{"size":"4XL","stock":3}]}],"photo":"p/31.jpg"},{"code":"LD-1842A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["3XL","4XL"],"colours":[{"name":"Темно-синій","swatch":"background: #00008b;","sizes":[{"size":"3XL","stock":2},{"size":"4XL","stock":3}]}],"photo":"p/32.jpg"},{"code":"LD-1843A","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер / Спандекс"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","L","2XL","3XL","4XL"],"colours":[{"name":"Блакитний-червоний","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #ff0000 50% 100%);","sizes":[{"size":"M","stock":4},{"size":"L","stock":5},{"size":"2XL","stock":1},{"size":"3XL","stock":1},{"size":"4XL","stock":3}]},{"name":"Чорний-рожевий","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #ffc0cb 50% 100%);","sizes":[{"size":"M","stock":1},{"size":"2XL","stock":3},{"size":"3XL","stock":1},{"size":"4XL","stock":2}]}],"photo":"p/33.jpg"},{"code":"LD-3801","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["L","2XL","3XL","4XL","M"],"colours":[{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"L","stock":1},{"size":"2XL","stock":3},{"size":"3XL","stock":5},{"size":"4XL","stock":5}]},{"name":"Синій","swatch":"background: #0000ff;","sizes":[{"size":"M","stock":1},{"size":"3XL","stock":5},{"size":"4XL","stock":4}]}],"photo":"p/34.jpg"},{"code":"LD-3803","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["4XL","3XL","2XL","M"],"colours":[{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"4XL","stock":4},{"size":"3XL","stock":1},{"size":"2XL","stock":4},{"size":"M","stock":4}]},{"name":"Синій","swatch":"background: #0000ff;","sizes":[{"size":"4XL","stock":1}]}],"photo":"p/35.jpg"},{"code":"LD-P811","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","L","XL","2XL","3XL","4XL"],"colours":[{"name":"Блакитний","swatch":"background: #00bfff;","sizes":[{"size":"M","stock":5},{"size":"L","stock":3},{"size":"XL","stock":3},{"size":"2XL","stock":4},{"size":"3XL","stock":5},{"size":"4XL","stock":5}]},{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"M","stock":4},{"size":"L","stock":5},{"size":"XL","stock":5},{"size":"2XL","stock":4},{"size":"3XL","stock":5},{"size":"4XL","stock":6}]}],"photo":"p/36.jpg"},{"code":"LD-P819","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["XL","2XL","3XL","4XL","M","L"],"colours":[{"name":"Білий-блакитний","swatch":"background: #ffffff;background: linear-gradient(135deg, #ffffff 0% 50%, #00bfff 50% 100%);","sizes":[{"size":"XL","stock":3},{"size":"2XL","stock":5},{"size":"3XL","stock":1},{"size":"4XL","stock":1}]},{"name":"Блакитний-жовтий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #ffff00 50% 100%);","sizes":[{"size":"M","stock":1},{"size":"L","stock":1},{"size":"XL","stock":2},{"size":"3XL","stock":2},{"size":"4XL","stock":5}]},{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"M","stock":5},{"size":"L","stock":5},{"size":"XL","stock":4},{"size":"2XL","stock":5},{"size":"3XL","stock":5},{"size":"4XL","stock":5}]},{"name":"Чорний","swatch":"background: #000000;","sizes":[{"size":"M","stock":3},{"size":"L","stock":1},{"size":"2XL","stock":1},{"size":"3XL","stock":2},{"size":"4XL","stock":2}]}],"photo":"p/37.jpg"},{"code":"LD-P823","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","XL","2XL","3XL","4XL"],"colours":[{"name":"Білий","swatch":"background: #ffffff;","sizes":[{"size":"M","stock":1},{"size":"XL","stock":4},{"size":"2XL","stock":4},{"size":"3XL","stock":5},{"size":"4XL","stock":5}]},{"name":"Синій","swatch":"background: #0000ff;","sizes":[{"size":"2XL","stock":4},{"size":"3XL","stock":3},{"size":"4XL","stock":5},{"size":"M","stock":4},{"size":"XL","stock":1}]}],"photo":"p/38.jpg"},{"code":"LD-P825","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["XL","3XL","4XL"],"colours":[{"name":"Білий","swatch":"background: #ffffff;","sizes":[{"size":"XL","stock":5}]},{"name":"Синій","swatch":"background: #0000ff;","sizes":[{"size":"3XL","stock":6},{"size":"4XL","stock":8}]}],"photo":"p/39.jpg"},{"code":"LD-P827","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["2XL","3XL","4XL","L","M"],"colours":[{"name":"Білий","swatch":"background: #ffffff;","sizes":[{"size":"2XL","stock":3},{"size":"3XL","stock":5},{"size":"4XL","stock":9},{"size":"L","stock":3},{"size":"M","stock":3}]},{"name":"Блакитний","swatch":"background: #00bfff;","sizes":[{"size":"4XL","stock":3},{"size":"M","stock":5},{"size":"L","stock":2}]}],"photo":"p/40.jpg"},{"code":"LD-P835","name":"Форма волейбольна чоловіча футболка і шорти LIDONG","brand":"LIDONG","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 90% / Спандекс 10%"],["Країна-виробник","Китай"]],"sizes":["M","4XL"],"colours":[{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"M","stock":4},{"size":"4XL","stock":5}]},{"name":"Синій","swatch":"background: #0000ff;","sizes":[{"size":"M","stock":2}]}],"photo":"p/41.jpg"},{"code":"7319-8808","name":"Форма волейбольна чоловіча футболка і шорти Lingo","brand":"Lingo","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["S","M","L","XL","2XL","3XL"],"colours":[{"name":"Салатовий-блакитний","swatch":"background: #99ff99;background: linear-gradient(135deg, #99ff99 0% 50%, #00bfff 50% 100%);","sizes":[{"size":"S","stock":10},{"size":"M","stock":6},{"size":"L","stock":11},{"size":"XL","stock":8},{"size":"2XL","stock":5},{"size":"3XL","stock":2}]},{"name":"Чорний-салатовий","swatch":"background: #000000;background: linear-gradient(135deg, #000000 0% 50%, #99ff99 50% 100%);","sizes":[{"size":"XL","stock":10},{"size":"2XL","stock":10},{"size":"3XL","stock":7},{"size":"S","stock":6},{"size":"M","stock":10},{"size":"L","stock":10}]}],"photo":"p/42.jpg"},{"code":"7329-8808","name":"Форма волейбольна чоловіча футболка і шорти Lingo","brand":"Lingo","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["S","M","L","XL","2XL","3XL"],"colours":[{"name":"Червоний-жовтий-темно-синій","swatch":"background: #ff0000;background: linear-gradient(135deg, #ff0000 0% 33%, #ffff00 33% 66%, #00008b 66% 100%);","sizes":[{"size":"S","stock":5},{"size":"M","stock":4},{"size":"L","stock":4},{"size":"XL","stock":3},{"size":"2XL","stock":3},{"size":"3XL","stock":7}]},{"name":"Салатовий-помаранчевий-синій","swatch":"background: #99ff99;background: linear-gradient(135deg, #99ff99 0% 33%, #ffa500 33% 66%, #0000ff 66% 100%);","sizes":[{"size":"S","stock":3},{"size":"2XL","stock":6},{"size":"3XL","stock":3}]}],"photo":"p/43.jpg"},{"code":"7369-8808","name":"Форма волейбольна чоловіча футболка і шорти Lingo","brand":"Lingo","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["S","M","L","XL","2XL","3XL"],"colours":[{"name":"Блакитний-салатовий","swatch":"background: #00bfff;background: linear-gradient(135deg, #00bfff 0% 50%, #99ff99 50% 100%);","sizes":[{"size":"S","stock":10},{"size":"M","stock":10},{"size":"L","stock":11},{"size":"XL","stock":10},{"size":"2XL","stock":10},{"size":"3XL","stock":11}]}],"photo":"p/44.jpg"},{"code":"6503M","name":"Форма волейбольна чоловіча футболка і шорти SP-Sport","brand":"SP-Sport","kind":"Волейбольна форма","set":"Футболка / Шорти","age":"adults","grid":"2681","specs":[["Вид","Волейбольна форма"],["Комплектація","Футболка / Шорти"],["Матеріал","Поліестер"],["Склад тканини","Поліестер 100%"],["Країна-виробник","Китай"]],"sizes":["M"],"colours":[{"name":"Білий","swatch":"background: #ffffff;","sizes":[{"size":"M","stock":11}]},{"name":"Червоний","swatch":"background: #ff0000;","sizes":[{"size":"M","stock":5}]}],"photo":"p/45.jpg"}],"grids":{"2077":{"header":["Розмір виробника","Довжина футболки, см","Ширина футболки, см","Обхват грудей, см","Рекомендований зріст, см","Рекомендована вага, кг","Розмір одягу (UA)"],"rows":[["3XS","48","34","64","120","25","30-32"],["2XS","50","36","68","130","30","32-34"],["XS","52","38","72","140","35","34-36"],["S","54,5","40","76","150","40","36-38"],["M","57","42","80","155","45","38-40"],["L","59,5","44","84","160","50","40-42"],["XL","62","46","88","165","55","42-44"],["2XL","64,5","48","92","170","60","44-46"],["3XL","67","50","96","175","65","46-48"]]},"2673":{"header":["Розмір виробника","Довжина футболки, см","Ширина футболки, см","Обхват грудей, см","Рекомендований зріст, см","Рекомендована вага, кг","Розмір одягу (UA)"],"rows":[["S","55","40","76","150-155","40","38-40"],["M","57","42","80","155-160","45","40-42"],["L","59,5","44","84","160-165","50","42-44"],["XL","62","46","88","165-170","55","44-46"],["2XL","64,5","48","92","170-175","60","46-48"],["3XL","67","50","96","175-180","65","48-50"]]},"2681":{"header":["Розмір виробника","Довжина футболки, см","Ширина футболки, см","Обхват грудей, см","Рекомендований зріст, см","Рекомендована вага, кг","Розмір одягу (UA)"],"rows":[["M","65","48","84","160-165","55-60","42-44"],["L","67,5","50","88","165-170","60-70","44-46"],["XL","70","52","92","170-175","67,5-77,5","46-48"],["2XL","72,5","54","96","175-180","72,5-80","48-50"],["3XL","75","56","100","180-185","80-90","50-52"],["4XL","77,5","58","104","185-190","90-100","52-54"]]},"2797":{"header":["Розмір виробника","Довжина футболки, см","Довжина шортів, см","Обхват грудей, см","Рекомендований зріст, см","Рекомендована вага, кг","Розмір одягу (UA)"],"rows":[["M","62","36","84","150-155","40-45","40-42"],["L","65","37","88","156-160","45-50","42-44"],["XL","68","38","92","161-165","50-55","44-46"],["2XL","70","39","96","166-170","55-60","46-48"],["3XL","72","40","100","171-175","60-65","48-50"],["4XL","74","41","104","176-180","65-70","50-52"]]}}}</script>
+<script>
+  (function () {
+    var DATA = JSON.parse(document.getElementById('catalog-data').textContent);
+    var models = DATA.models;
+
+    var AGE_LABEL = { kids: 'Дитяча', adults: 'Доросла', both: 'Дитяча і доросла', unknown: 'Без позначки' };
+    var LETTERS = ['6XS', '5XS', '4XS', '3XS', '2XS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'];
+
+    var AGE_SHORT = { kids: 'Дитяча', adults: 'Доросла', both: 'Діти + дорослі', unknown: '' };
+
+    // Назви постачальника в межах категорії майже однакові ("Форма футбольна
+    // дитяча комплект футболка і шорти SP-Sport"), тому на картці показуємо те,
+    // що РІЗНЕ: клуб (у клубній формі) або вік + комплектацію. Повна назва
+    // лишається в картці моделі та у підказці.
+    function setOf(m) {
+      // "1 шт" — це кількість у пакуванні, а не комплектація: для гетр
+      // постачальник пише саме так, і як вид товару воно нічого не каже.
+      var set = m.set || '';
+      if (/^\d+\s*шт\.?$/i.test(set.trim())) set = '';
+      return set || m.kind || '';
+    }
+
+    function headline(m) {
+      var club = null;
+      (m.specs || []).forEach(function (pair) { if (pair[0] === 'Клуб / збірна') club = pair[1]; });
+      if (club) return club;
+      var set = setOf(m).replace(/\s*\/\s*/g, ' + ').toLowerCase();
+      var age = AGE_SHORT[m.age] || '';
+      if (age && set) return age + ' · ' + set;
+      if (set) return set.charAt(0).toUpperCase() + set.slice(1);
+      return m.name;
+    }
+
+    function plural(n, one, few, many) {
+      var mod10 = n % 10, mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return one;
+      if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+      return many;
+    }
+
+    function sizeRank(size) {
+      var s = String(size).trim();
+      var li = LETTERS.indexOf(s.toUpperCase());
+      if (li !== -1) return li;
+      // "S/S17/27-32-UKR", "M-39-41", "XL-45-48": літера стоїть попереду
+      var head = s.split(/[\/,\-]/)[0].trim().toUpperCase();
+      var hi = LETTERS.indexOf(head);
+      if (hi !== -1) return hi;
+      var num = parseInt(s, 10);
+      if (!isNaN(num)) return 100 + num;
+      return 500;
+    }
+    function sortSizes(list) { return list.slice().sort(function (a, b) { return sizeRank(a) - sizeRank(b); }); }
+
+    // Короткий підпис розміру для картки: "24, зріст 130-135" -> "24"
+    function shortSize(size) {
+      var s = String(size).trim();
+      // Діапазон на стопу показуємо цілим: "31-34" без нього читається як "31".
+      if (/^\d{1,3}\s*-\s*\d{1,3}$/.test(s)) return s;
+      var head = s.split(/[\/,]/)[0].trim();
+      var m = /^([0-9]{2,3}|[0-9]?X{0,4}[SML]|[2-5]X[SL])\b/i.exec(head);
+      return m ? m[1] : head;
+    }
+
+    function dateLabel(iso) {
+      var d = new Date(iso);
+      if (isNaN(d)) return '';
+      var months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня', 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'];
+      return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    var state = { q: '', age: null, kind: null, size: null };
+
+    var grid = document.getElementById('grid');
+    var empty = document.getElementById('empty');
+    var countEl = document.getElementById('count');
+    var totalEl = document.getElementById('total');
+    var resetBtn = document.getElementById('reset');
+
+    document.getElementById('meta').textContent =
+      models.length + ' ' + plural(models.length, 'модель', 'моделі', 'моделей') +
+      ' в наявності · оновлено ' + dateLabel(DATA.fetchedAt);
+    document.getElementById('footMeta').textContent =
+      DATA.note + '. Каталог оновлено ' + dateLabel(DATA.fetchedAt) + '.';
+    totalEl.textContent = models.length;
+
+    // --- фільтри, побудовані з реальних даних ---
+    function buildChips(rowId, values, key) {
+      var row = document.getElementById(rowId);
+      values.forEach(function (v) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'chip';
+        b.textContent = v.label;
+        b.setAttribute('aria-pressed', 'false');
+        b.addEventListener('click', function () {
+          state[key] = state[key] === v.value ? null : v.value;
+          syncChips();
+          render();
+        });
+        b.dataset.value = v.value;
+        b.dataset.key = key;
+        row.appendChild(b);
+      });
+    }
+
+    var ages = [];
+    ['kids', 'both', 'adults'].forEach(function (a) {
+      if (models.some(function (m) { return m.age === a; })) {
+        ages.push({ value: a, label: a === 'both' ? 'Дитяча і доросла' : AGE_LABEL[a] });
+      }
+    });
+    buildChips('ageRow', ages, 'age');
+
+    var kinds = [];
+    models.forEach(function (m) {
+      var k = setOf(m);
+      if (k && kinds.indexOf(k) === -1) kinds.push(k);
+    });
+    buildChips('kindRow', kinds.map(function (k) { return { value: k, label: k }; }), 'kind');
+
+    var sizeSet = [];
+    models.forEach(function (m) {
+      m.sizes.forEach(function (s) {
+        var short = shortSize(s);
+        if (sizeSet.indexOf(short) === -1) sizeSet.push(short);
+      });
+    });
+    buildChips('sizeRow', sortSizes(sizeSet).map(function (s) { return { value: s, label: s }; }), 'size');
+
+    function syncChips() {
+      Array.prototype.forEach.call(document.querySelectorAll('.chip'), function (b) {
+        b.setAttribute('aria-pressed', String(state[b.dataset.key] === b.dataset.value));
+      });
+      resetBtn.hidden = !(state.q || state.age || state.kind || state.size);
+    }
+
+    document.getElementById('q').addEventListener('input', function (e) {
+      state.q = e.target.value.trim().toLowerCase();
+      syncChips();
+      render();
+    });
+    resetBtn.addEventListener('click', function () {
+      state = { q: '', age: null, kind: null, size: null };
+      document.getElementById('q').value = '';
+      syncChips();
+      render();
+    });
+
+    function matches(m) {
+      if (state.age && m.age !== state.age) return false;
+      if (state.kind && setOf(m) !== state.kind) return false;
+      if (state.size && !m.sizes.some(function (s) { return shortSize(s) === state.size; })) return false;
+      if (state.q) {
+        var hay = (m.code + ' ' + m.name + ' ' + (m.brand || '') + ' ' +
+          m.colours.map(function (c) { return c.name; }).join(' ')).toLowerCase();
+        if (hay.indexOf(state.q) === -1) return false;
+      }
+      return true;
+    }
+
+    function swatchDot(colour) {
+      var d = document.createElement('span');
+      d.className = 'dot';
+      if (colour.swatch) d.setAttribute('style', colour.swatch);
+      else d.style.background = 'repeating-linear-gradient(45deg, #ccc 0 4px, #eee 4px 8px)';
+      d.title = colour.name;
+      return d;
+    }
+
+    function cardFor(m) {
+      var card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'card';
+
+      var shot = document.createElement('div');
+      shot.className = 'shot';
+      shot.style.setProperty('--n', m.colours.length);
+      shot.style.setProperty('--i', 0);
+      if (m.photo) {
+        var img = document.createElement('img');
+        img.src = m.photo;
+        img.alt = m.name;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        shot.appendChild(img);
+      } else {
+        // У постачальника трапляються товари з битим посиланням на фото
+        // (перевірено 2026-10-25: їхній файл віддає 404). Порожня біла
+        // плашка виглядає як поломка — краще сказати прямо.
+        var stub = document.createElement('span');
+        stub.className = 'shot__none';
+        stub.textContent = 'Фото немає';
+        shot.appendChild(stub);
+      }
+      if (m.colours.length > 1) {
+        var badge = document.createElement('span');
+        badge.className = 'shot__badge';
+        badge.textContent = m.colours.length + ' ' + plural(m.colours.length, 'колір', 'кольори', 'кольорів');
+        shot.appendChild(badge);
+      }
+      card.appendChild(shot);
+
+      var body = document.createElement('div');
+      body.className = 'card__body';
+
+      var name = document.createElement('div');
+      name.className = 'card__name';
+      name.textContent = headline(m);
+      name.title = m.name;
+      body.appendChild(name);
+
+      var code = document.createElement('div');
+      code.className = 'card__code';
+      code.textContent = m.code + (m.brand ? ' · ' + m.brand : '');
+      body.appendChild(code);
+
+      var dots = document.createElement('div');
+      dots.className = 'dots';
+      m.colours.slice(0, 6).forEach(function (c) { dots.appendChild(swatchDot(c)); });
+      if (m.colours.length > 6) {
+        var more = document.createElement('span');
+        more.className = 'dots__more';
+        more.textContent = '+' + (m.colours.length - 6);
+        dots.appendChild(more);
+      }
+      body.appendChild(dots);
+
+      var sizes = document.createElement('div');
+      sizes.className = 'sizes';
+      sortSizes(m.sizes.map(shortSize).filter(function (v, i, a) { return a.indexOf(v) === i; }))
+        .slice(0, 7)
+        .forEach(function (s) {
+          var el = document.createElement('span');
+          el.className = 'size';
+          el.textContent = s;
+          sizes.appendChild(el);
+        });
+      body.appendChild(sizes);
+
+      card.appendChild(body);
+      card.addEventListener('click', function () { openModel(m); });
+      return card;
+    }
+
+    function render() {
+      var list = models.filter(matches);
+      grid.textContent = '';
+      var frag = document.createDocumentFragment();
+      list.forEach(function (m) { frag.appendChild(cardFor(m)); });
+      grid.appendChild(frag);
+      countEl.textContent = list.length;
+      empty.hidden = list.length > 0;
+    }
+
+    // --- картка моделі ---
+    var dialog = document.getElementById('modelDialog');
+    var mBody = document.getElementById('mBody');
+
+    function block(label, node) {
+      var b = document.createElement('div');
+      b.className = 'block';
+      var l = document.createElement('div');
+      l.className = 'block__label';
+      l.textContent = label;
+      b.appendChild(l);
+      b.appendChild(node);
+      return b;
+    }
+
+    function openModel(m) {
+      document.getElementById('mTitle').textContent = m.name;
+      document.getElementById('mSub').textContent =
+        'Артикул ' + m.code + (m.brand ? ' · ' + m.brand : '') + ' · ' + AGE_LABEL[m.age];
+      mBody.textContent = '';
+
+      var shot = document.createElement('div');
+      shot.className = 'sheet__shot';
+      shot.style.setProperty('--n', m.colours.length);
+      shot.style.setProperty('--i', 0);
+      if (m.photo) {
+        var img = document.createElement('img');
+        img.src = m.photo;
+        img.alt = m.name;
+        shot.appendChild(img);
+      }
+      mBody.appendChild(shot);
+
+      var sizeWrap = document.createElement('div');
+      var swatches = document.createElement('div');
+      swatches.className = 'swatches';
+
+      function showColour(idx) {
+        shot.style.setProperty('--i', idx);
+        Array.prototype.forEach.call(swatches.children, function (btn, i) {
+          btn.setAttribute('aria-pressed', String(i === idx));
+        });
+        sizeWrap.textContent = '';
+        var list = document.createElement('div');
+        list.className = 'sizelist';
+        m.colours[idx].sizes.slice()
+          .sort(function (a, b) { return sizeRank(a.size) - sizeRank(b.size); })
+          .forEach(function (s) {
+            var el = document.createElement('span');
+            el.className = 'size';
+            el.appendChild(document.createTextNode(s.size));
+            var qty = document.createElement('b');
+            qty.className = 'size__qty';
+            qty.textContent = s.stock + ' шт';
+            el.appendChild(qty);
+            list.appendChild(el);
+          });
+        sizeWrap.appendChild(list);
+      }
+
+      m.colours.forEach(function (c, i) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'swatch';
+        btn.setAttribute('aria-pressed', 'false');
+        btn.appendChild(swatchDot(c));
+        btn.appendChild(document.createTextNode(c.name));
+        btn.addEventListener('click', function () { showColour(i); });
+        swatches.appendChild(btn);
+      });
+
+      mBody.appendChild(block(m.colours.length > 1 ? 'Кольори' : 'Колір', swatches));
+      mBody.appendChild(block('Є в наявності (розмір і залишок)', sizeWrap));
+      showColour(0);
+
+      var g = m.grid && DATA.grids[m.grid];
+      if (g) {
+        var scroller = document.createElement('div');
+        scroller.className = 'scroller';
+        var table = document.createElement('table');
+        var thead = document.createElement('thead');
+        var htr = document.createElement('tr');
+        g.header.forEach(function (h) {
+          var th = document.createElement('th');
+          th.textContent = h;
+          htr.appendChild(th);
+        });
+        thead.appendChild(htr);
+        table.appendChild(thead);
+        var tbody = document.createElement('tbody');
+        g.rows.forEach(function (row) {
+          var tr = document.createElement('tr');
+          row.forEach(function (cell, i) {
+            var td = document.createElement(i === 0 ? 'th' : 'td');
+            td.textContent = cell || '—';
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        scroller.appendChild(table);
+        mBody.appendChild(block('Розмірна таблиця виробника', scroller));
+      }
+
+      if (m.specs && m.specs.length) {
+        var dl = document.createElement('dl');
+        dl.className = 'specs';
+        m.specs.forEach(function (pair) {
+          var dt = document.createElement('dt');
+          dt.textContent = pair[0];
+          var dd = document.createElement('dd');
+          dd.textContent = pair[1];
+          dl.appendChild(dt);
+          dl.appendChild(dd);
+        });
+        mBody.appendChild(block('Характеристики', dl));
+      }
+
+      var order = document.createElement('div');
+      order.className = 'order';
+      order.innerHTML = 'Щоб замовити, напишіть у Direct артикул, колір і розмір: <code></code>';
+      var firstSize = m.colours[0].sizes.slice()
+        .sort(function (a, b) { return sizeRank(a.size) - sizeRank(b.size); })[0];
+      order.querySelector('code').textContent = m.code + ' · ' + m.colours[0].name + ' · ' + firstSize.size;
+      mBody.appendChild(order);
+
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+      mBody.scrollTop = 0;
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-close]'), function (btn) {
+      btn.addEventListener('click', function () { btn.closest('dialog').close(); });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('dialog'), function (d) {
+      d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
+    });
+    document.getElementById('helpBtn').addEventListener('click', function () {
+      document.getElementById('helpDialog').showModal();
+    });
+
+    syncChips();
+    render();
+  })();
+</script>
