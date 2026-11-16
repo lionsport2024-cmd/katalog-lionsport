@@ -1,3 +1,12 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<!-- БЕЗ ЦЬОГО РЯДКА мобільний браузер малює сторінку як десктоп шириною 980px:
+     усе дрібне, картки обрізані, потрібен щипок для масштабу. Знайдено
+     16.11.2026 — сторінки лишались фрагментом ще з часів, коли їх показував
+     артефакт Claude і <head> додавала платформа. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Баскетбольна форма</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -135,7 +144,8 @@
   }
   .chip {
     font: inherit;
-    font-size: 13px;
+    font-size: 13.5px;
+    min-height: 38px;
     font-weight: 500;
     flex: none;
     background: var(--chip);
@@ -175,7 +185,7 @@
   /* ---------- сітка карток ---------- */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 14px;
     padding-block: 8px 40px;
   }
@@ -246,6 +256,33 @@
     letter-spacing: .04em;
     font-variant-numeric: tabular-nums;
   }
+  /* Мініатюра кольору: та сама смужка фото, зсунута на потрібну клітинку. */
+  .thumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .thumb {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    flex: none;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    overflow: hidden;
+    background: #fff;
+    cursor: pointer;
+  }
+  .thumb img {
+    position: absolute;
+    top: 0;
+    left: calc(-100% * var(--i, 0));
+    height: 100%;
+    width: calc(100% * var(--n, 1));
+    max-width: none;
+    object-fit: cover;
+    display: block;
+  }
+  .thumb[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+  .thumbs__more { font-size: 12px; color: var(--muted); align-self: center; }
+
   .dots { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
   .dot {
     width: 15px;
@@ -257,7 +294,7 @@
   .dots__more { font-size: 11px; color: var(--muted); }
   .sizes { display: flex; flex-wrap: wrap; gap: 4px; }
   .size {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     background: var(--accent-soft);
     color: var(--accent);
@@ -327,6 +364,10 @@
     border-radius: 12px;
     background: #fff;
     border: 1px solid var(--line);
+    /* БЕЗ flex:none фото стискалося до 2 пікселів: вміст картки вищий за
+       вікно, і колонка-флекс віднімала висоту саме в цього блока (він
+       єдиний тягнеться пропорційно). Знайдено 16.11.2026 на телефоні. */
+    flex: none;
   }
   .sheet__shot img {
     position: absolute;
@@ -362,6 +403,26 @@
   }
   .swatch[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
   .swatch .dot { width: 16px; height: 16px; }
+  .swatch__mini {
+    position: relative;
+    width: 26px;
+    height: 26px;
+    flex: none;
+    border-radius: 7px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .swatch__mini img {
+    position: absolute;
+    top: 0;
+    left: calc(-100% * var(--i, 0));
+    height: 100%;
+    width: calc(100% * var(--n, 1));
+    max-width: none;
+    object-fit: cover;
+    display: block;
+  }
   .sizelist { display: flex; flex-wrap: wrap; gap: 6px; }
   .sizelist .size {
     font-size: 12.5px;
@@ -425,6 +486,9 @@
   }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
+</head>
+<body>
+
 
 <header class="top">
   <div class="top__inner">
@@ -659,6 +723,29 @@
       return true;
     }
 
+    // Кнопка-мініатюра кольору. Якщо фото немає — показуємо кружечок, як було.
+    function colourThumb(m, index) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'thumb';
+      btn.setAttribute('aria-pressed', String(index === 0));
+      btn.title = m.colours[index].name;
+      btn.setAttribute('aria-label', 'Колір: ' + m.colours[index].name);
+      btn.style.setProperty('--n', m.colours.length);
+      btn.style.setProperty('--i', index);
+      if (m.photo) {
+        var img = document.createElement('img');
+        img.src = m.photo;
+        img.alt = m.colours[index].name;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        btn.appendChild(img);
+      } else {
+        btn.appendChild(swatchDot(m.colours[index]));
+      }
+      return btn;
+    }
+
     function swatchDot(colour) {
       var d = document.createElement('span');
       d.className = 'dot';
@@ -715,16 +802,33 @@
       code.textContent = m.code + (m.brand ? ' · ' + m.brand : '');
       body.appendChild(code);
 
-      var dots = document.createElement('div');
-      dots.className = 'dots';
-      m.colours.slice(0, 6).forEach(function (c) { dots.appendChild(swatchDot(c)); });
-      if (m.colours.length > 6) {
-        var more = document.createElement('span');
-        more.className = 'dots__more';
-        more.textContent = '+' + (m.colours.length - 6);
-        dots.appendChild(more);
+      // Клієнт має БАЧИТИ, що кольори різні, не відкриваючи картку:
+      // мініатюри — це справжні фото кожного кольору (рішення 2026-11-16).
+      var thumbs = document.createElement('div');
+      thumbs.className = 'thumbs';
+      var shown = Math.min(m.colours.length, 5);
+      for (var ci = 0; ci < shown; ci += 1) {
+        (function (index) {
+          var t = colourThumb(m, index);
+          t.addEventListener('click', function (event) {
+            event.stopPropagation(); // не відкривати вікно моделі
+            shot.style.setProperty('--i', index);
+            Array.prototype.forEach.call(thumbs.children, function (el) {
+              if (el.classList && el.classList.contains('thumb')) {
+                el.setAttribute('aria-pressed', String(el === t));
+              }
+            });
+          });
+          thumbs.appendChild(t);
+        }(ci));
       }
-      body.appendChild(dots);
+      if (m.colours.length > shown) {
+        var more = document.createElement('span');
+        more.className = 'thumbs__more';
+        more.textContent = '+' + (m.colours.length - shown);
+        thumbs.appendChild(more);
+      }
+      if (m.colours.length > 1) body.appendChild(thumbs);
 
       var sizes = document.createElement('div');
       sizes.className = 'sizes';
@@ -818,7 +922,22 @@
         btn.type = 'button';
         btn.className = 'swatch';
         btn.setAttribute('aria-pressed', 'false');
-        btn.appendChild(swatchDot(c));
+        // Фото кольору замість кружечка (2026-11-16): назву «Білий-синій»
+        // кожен уявляє по-своєму, а фото питань не лишає.
+        if (m.photo) {
+          var mini = document.createElement('span');
+          mini.className = 'swatch__mini';
+          mini.style.setProperty('--n', m.colours.length);
+          mini.style.setProperty('--i', i);
+          var img = document.createElement('img');
+          img.src = m.photo;
+          img.alt = '';
+          img.loading = 'lazy';
+          mini.appendChild(img);
+          btn.appendChild(mini);
+        } else {
+          btn.appendChild(swatchDot(c));
+        }
         btn.appendChild(document.createTextNode(c.name));
         btn.addEventListener('click', function () { showColour(i); });
         swatches.appendChild(btn);
@@ -897,3 +1016,5 @@
     render();
   })();
 </script>
+</body>
+</html>
